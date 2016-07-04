@@ -2,11 +2,13 @@ package com.lb.wecharenglish;
 
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.TypedValue;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.lb.utils.LogUtil;
+import com.lb.utils.Screenutil;
+import com.lb.utils.ToastUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.domain.EnglishBean;
 import com.lb.wecharenglish.server.EnglishServer;
@@ -58,15 +60,17 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             }
         });
 
-        int pageSize = 10;
+        int pageSize = 3;
         int pageNo = datas.size() / pageSize + 1;
         List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, pageNo, pageSize);
 
         //数据去重
         for (EnglishBean bean : dbList) {
-            if (!datas.contains(bean))
+            if (!datas.contains(bean)) {
                 datas.add(bean);
+            }
         }
+
         adapter.notifyDataSetChanged();
     }
 
@@ -74,6 +78,32 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     protected void setListener() {
         sr_main_refresh.setOnRefreshListener(this);
 
+        lv_main_datas.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                    // 当不滚动时
+                    case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                        // 判断滚动到底部
+                        if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
+                            isLoadMore = true;
+                            sr_main_refresh.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sr_main_refresh.setRefreshing(true);
+                                    onRefresh();
+                                }
+                            });
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
+            }
+        });
     }
 
     //===Desc:本类使用的方法===============================================================================================
@@ -92,6 +122,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         }
                     }
                 }
+
                 mHandle.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -104,11 +135,50 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         }.start();
     }
 
+    private void loadMore() {
+        int pageSize = 3;
+        int pageNo = datas.size() / pageSize + 1;
+
+        final int oldSize = datas.size();
+        List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, pageNo, pageSize);
+        LogUtil.e(this,dbList.get(0).getDate());
+
+        //数据去重
+        for (EnglishBean bean : dbList) {
+            if (!datas.contains(bean)) {
+                datas.add(bean);
+            }
+        }
+        final int size = datas.size();
+
+
+        mHandle.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+                sr_main_refresh.setRefreshing(false);
+                if (size > oldSize) {
+                    lv_main_datas.smoothScrollBy(Screenutil.dp2px(mContext, 50), 500);
+                } else {
+                    ToastUtil.showShortToast(mContext, "没有更多数据了");
+                }
+            }
+        }, 1000);
+
+        isLoadMore = false;
+    }
+
     //===Desc:刷新的监听===============================================================================================
     @Override
     public void onRefresh() {
-//        loadData();
+        if (isLoadMore) {
+            loadMore();
+        } else {
+            loadData();
+        }
     }
 
     private Handler mHandle = new Handler();
+
+    private boolean isLoadMore;
 }

@@ -42,6 +42,7 @@ import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.R;
 import com.lb.wecharenglish.domain.EnglishBean;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -89,9 +90,8 @@ public class HomeAdapter extends BaseAdapter {
         //设置数据显示
         EnglishBean bean = datas.get(i);
         holder.tv_item_title.setText(bean.getTitle());
-        holder.tv_item_date.setText(bean.getDate());
+        holder.tv_item_date.setText(bean.getDate()+"");
         holder.tv_item_desc.setText(Html.fromHtml(bean.getDesc()));
-
 
 
         return view;

@@ -33,7 +33,6 @@ package com.lb.wecharenglish.server;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.lb.utils.EncryptUtil;
 import com.lb.wecharenglish.dao.EnglishDao;
 import com.lb.wecharenglish.dao.impl.EnglishImpl;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -42,11 +41,11 @@ import com.lb.wecharenglish.net.Urls;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Collector;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -112,10 +111,7 @@ public class EnglishServer {
      */
     public List<EnglishBean> getDataByPage(Context context, int pageNo, int pageSize) {
 
-        //通过pageNo计算出数据库中应该开始的位置
-        if (pageNo > 1) {
-            pageNo = 1;
-        }
+
         //计算pageNo的最大数，获取数据库中的总条数
         int totalCount = dao.getTotalCount(context);
         int totalPage;
@@ -126,6 +122,10 @@ public class EnglishServer {
         }
         if (pageNo > totalPage)
             pageNo = totalPage;
+        //通过pageNo计算出数据库中应该开始的位置
+        if (pageNo < 1) {
+            pageNo = 1;
+        }
         int begin = (pageNo - 1) * pageSize;
         return dao.getDataByPage(context, begin, pageSize);
     }
@@ -138,19 +138,20 @@ public class EnglishServer {
         try {
             Document document = Jsoup.connect(Urls.ENGLISH_URL).get();
             if (null == document) return list;
-            Elements items = document.getElementsByTag("item" );
+            Elements items = document.getElementsByTag("item");
             if (null == items || items.size() == 0) return list;
+
             for (Element item : items) {
 
-                Elements titles = item.getElementsByTag("title" );
+                Elements titles = item.getElementsByTag("title");
                 if (null == titles || titles.size() == 0) return list;
                 String title = titles.get(0).html();
 
-                Elements descs = item.getElementsByTag("description" );
+                Elements descs = item.getElementsByTag("description");
                 if (null == descs || descs.size() == 0) return list;
                 String desc = descs.get(0).html();
 
-                Elements dates = item.getElementsByTag("pubDate" );
+                Elements dates = item.getElementsByTag("pubDate");
                 if (null == dates || dates.size() == 0) return list;
                 String date = dates.get(0).html();
 
@@ -158,11 +159,11 @@ public class EnglishServer {
                 EnglishBean bean = new EnglishBean();
                 bean.setTitle(title);
                 bean.setDesc(desc);
-                bean.setDate(date);
+                bean.setDate(new Date(date).getTime());
 
                 list.add(bean);
-                return list;
             }
+            return list;
         } catch (IOException e) {
             e.printStackTrace();
         }

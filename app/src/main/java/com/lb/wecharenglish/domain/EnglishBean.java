@@ -44,7 +44,7 @@ public class EnglishBean {
     private String id;//id
     private String title;//标题
     private String desc;//详情
-    private String date;//时间
+    private long date;//时间
     private long loadDate;//加载的时间
     private boolean isShow;//是否在界面上显示
 
@@ -72,11 +72,11 @@ public class EnglishBean {
         this.desc = desc;
     }
 
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
@@ -113,7 +113,7 @@ public class EnglishBean {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (desc != null ? desc.hashCode() : 0);
-        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (int) (date ^ (date >>> 32));
         result = 31 * result + (int) (loadDate ^ (loadDate >>> 32));
         result = 31 * result + (isShow ? 1 : 0);
         return result;

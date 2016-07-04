@@ -35,6 +35,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.lb.utils.LogUtil;
 import com.lb.wecharenglish.dao.EnglishDao;
 import com.lb.wecharenglish.db.EnglishDatabaseHelper;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -96,7 +97,7 @@ public class EnglishImpl implements EnglishDao {
             if (cursor.moveToNext()) {
                 String title = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_TITLE));
                 String desc = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_DESC));
-                String date = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_DATE));
+                long date = cursor.getLong(cursor.getColumnIndex(EnglishDatabaseHelper.T_DATE));
                 long loadDate = cursor.getLong(cursor.getColumnIndex(EnglishDatabaseHelper.T_LOAD_DATE));
                 int dbIsShow = cursor.getInt(cursor.getColumnIndex(EnglishDatabaseHelper.T_IS_SHOW));
 
@@ -137,7 +138,7 @@ public class EnglishImpl implements EnglishDao {
         SQLiteDatabase db = helper.getReadableDatabase();
 
         Cursor cursor = db.query(EnglishDatabaseHelper.TABLE_NAME, null, EnglishDatabaseHelper.T_IS_SHOW + "=?",
-                new String[]{String.valueOf(1)}, null, null, null, begin + "," + pageSize);
+                new String[]{String.valueOf(1)}, null, null, EnglishDatabaseHelper.T_DATE + " ASC", begin + "," + pageSize);
         if (null == cursor) {
             db.close();
             return list;
@@ -146,7 +147,7 @@ public class EnglishImpl implements EnglishDao {
         while (cursor.moveToNext()) {
             String title = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_TITLE));
             String desc = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_DESC));
-            String date = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_DATE));
+            long date = cursor.getLong(cursor.getColumnIndex(EnglishDatabaseHelper.T_DATE));
             long loadDate = cursor.getLong(cursor.getColumnIndex(EnglishDatabaseHelper.T_LOAD_DATE));
             int dbIsShow = cursor.getInt(cursor.getColumnIndex(EnglishDatabaseHelper.T_IS_SHOW));
 
@@ -162,6 +163,7 @@ public class EnglishImpl implements EnglishDao {
 
         cursor.close();
         db.close();
+
         return list;
 
     }
