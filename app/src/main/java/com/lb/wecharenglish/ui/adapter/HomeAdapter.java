@@ -32,18 +32,31 @@ package com.lb.wecharenglish.ui.adapter;
 
 import android.content.Context;
 import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.lb.utils.LogUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.R;
 import com.lb.wecharenglish.domain.EnglishBean;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 项目名称：ysp-android<br>
@@ -90,8 +103,20 @@ public class HomeAdapter extends BaseAdapter {
         //设置数据显示
         EnglishBean bean = datas.get(i);
         holder.tv_item_title.setText(bean.getTitle());
-        holder.tv_item_date.setText(bean.getDate()+"");
-        holder.tv_item_desc.setText(Html.fromHtml(bean.getDesc()));
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm:ss", Locale.CHINESE);
+        holder.tv_item_date.setText(format.format(new Date(bean.getDate())));
+//        holder.tv_item_desc.setText(Html.fromHtml(Html.fromHtml(bean.getDesc()));
+//        String html = Html.fromHtml(bean.getDesc()).toString();
+//       String reg ="<[^>/]+>";
+//        Pattern p_html = Pattern.compile(reg, Pattern.CASE_INSENSITIVE);
+//        Matcher m_html = p_html.matcher(html);
+//        html = m_html.replaceAll(""); // 过滤html标签
+
+//        desc = bean.getDesc().replaceAll("&gt;", ">");
+//        LogUtil.e(this, desc);
+
+
+        holder.tv_item_desc.setText(Html.fromHtml(Html.fromHtml(bean.getDesc()).toString()));
 
 
         return view;

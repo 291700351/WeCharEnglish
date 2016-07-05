@@ -30,6 +30,8 @@
 //                  不见满街漂亮妹，哪个归得程序员？
 package com.lb.wecharenglish.domain;
 
+import android.support.annotation.NonNull;
+
 import com.lb.utils.EncryptUtil;
 
 /**
@@ -39,7 +41,7 @@ import com.lb.utils.EncryptUtil;
  * 时间：2016/7/3 22:31<br>
  * 类描述：英语每日一句对应的javabean封装 <br>
  */
-public class EnglishBean {
+public class EnglishBean implements Comparable<EnglishBean> {
 
     private String id;//id
     private String title;//标题
@@ -129,5 +131,20 @@ public class EnglishBean {
                 ", loadDate='" + loadDate + '\'' +
                 ", isShow=" + isShow +
                 '}';
+    }
+
+    @Override
+    public int compareTo(@NonNull EnglishBean englishBean) {
+        //        当两个对象进行比较时，
+        //  返回0代表它们相等；
+        // 返回值<0（如例子中返回-1）代表this排在被比较对象之前；
+        // 反之代表在被比较对象之后
+        if (getDate() == englishBean.getDate()) {
+            if (getLoadDate() == englishBean.getLoadDate()) {
+                return getTitle().compareTo(englishBean.getTitle());
+            }
+            return (int) (englishBean.getLoadDate() - getLoadDate());
+        }
+        return (int) (englishBean.getDate() - getDate());
     }
 }

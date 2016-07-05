@@ -54,6 +54,7 @@ public class EnglishDatabaseHelper extends SQLiteOpenHelper {
      */
     public static String TABLE_NAME = "englishs";
 
+
     /**
      * 数据库字段id
      */
@@ -84,6 +85,26 @@ public class EnglishDatabaseHelper extends SQLiteOpenHelper {
      */
     public static String T_IS_SHOW = "_isShow";
 
+    //===Desc:图片数据库相关的字段==========================================================================================
+    /**
+     * 图片的表名
+     */
+    public static String TABLE_NAME_IMG = "englishs_img";
+
+    /**
+     * 图片数据库的图片id
+     */
+    public static String T_IMG_ID = "_img_id";
+
+    /**
+     * 图片数据库的图片url
+     */
+    public static String T_IMG_URL = "_img_url";
+
+    /**
+     * 图片数据  图片对应的额英语的id
+     */
+    public static String T_IMG_ENGLISG = "_img_englisg";
 
     //===Desc:构造函数===============================================================================================
     public EnglishDatabaseHelper(Context context) {
@@ -93,6 +114,7 @@ public class EnglishDatabaseHelper extends SQLiteOpenHelper {
     //===Desc:复写父类中的方法===============================================================================
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        //每日一句表
         String sql = "create table " + TABLE_NAME + "("
                 + T_ID + " VARCHAR PRIMARY KEY,"
                 + T_TITLE + "  VARCHAR,"
@@ -101,7 +123,12 @@ public class EnglishDatabaseHelper extends SQLiteOpenHelper {
                 + T_LOAD_DATE + "  VARCHAR,"
                 + T_IS_SHOW + "  int)";
         sqLiteDatabase.execSQL(sql);
-
+        //对应的图片表
+        String imgSql = "create table " + TABLE_NAME_IMG + "("
+                + T_IMG_ID + " VARCHAR PRIMARY KEY,"
+                + T_IMG_URL + "  VARCHAR,"
+                + T_IMG_ENGLISG + "  VARCHAR)";
+        sqLiteDatabase.execSQL(imgSql);
     }
 
     @Override
@@ -109,5 +136,9 @@ public class EnglishDatabaseHelper extends SQLiteOpenHelper {
 
     }
     //===Desc:本类中使用的方法===============================================================================
+
+
+    //===Desc:外界使用的方法==========================================================================================
+
 
 }

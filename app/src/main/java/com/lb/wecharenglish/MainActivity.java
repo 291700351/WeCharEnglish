@@ -7,7 +7,6 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.lb.utils.LogUtil;
-import com.lb.utils.Screenutil;
 import com.lb.utils.ToastUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -15,12 +14,19 @@ import com.lb.wecharenglish.server.EnglishServer;
 import com.lb.wecharenglish.ui.activity.BaseActivity;
 import com.lb.wecharenglish.ui.adapter.HomeAdapter;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
     //===Desc:成员变量===============================================================================================
 
+    private int pageSize = 10;
     /**
      * 显示在界面上的数据展示
      */
@@ -60,7 +66,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             }
         });
 
-        int pageSize = 3;
         int pageNo = datas.size() / pageSize + 1;
         List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, pageNo, pageSize);
 
@@ -70,7 +75,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 datas.add(bean);
             }
         }
-
+        Collections.sort(datas);
         adapter.notifyDataSetChanged();
     }
 
@@ -114,6 +119,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             public void run() {
                 List<EnglishBean> remoteData = new EnglishServer().getDataFromRemote();
                 //调用业务层进行添加
+                final int oldSize = datas.size();
+                LogUtil.e(this,"---------------------------------");
+
                 if (null != remoteData && remoteData.size() != 0) {
                     for (EnglishBean bean : remoteData) {
                         new EnglishServer().add(mContext, bean);
@@ -122,10 +130,14 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         }
                     }
                 }
-
+                Collections.sort(datas);
                 mHandle.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        if (datas.size() > oldSize)
+                            ToastUtil.showShortToast(mContext, "更新" + (datas.size() - oldSize) + "条数据");
+                        else
+                            ToastUtil.showShortToast(mContext, "暂无更新");
                         adapter.notifyDataSetChanged();
                         sr_main_refresh.setRefreshing(false);
                     }
@@ -136,12 +148,11 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void loadMore() {
-        int pageSize = 3;
         int pageNo = datas.size() / pageSize + 1;
 
         final int oldSize = datas.size();
         List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, pageNo, pageSize);
-        LogUtil.e(this,dbList.get(0).getDate());
+        LogUtil.e(this, dbList.get(0).getDate());
 
         //数据去重
         for (EnglishBean bean : dbList) {
@@ -149,8 +160,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 datas.add(bean);
             }
         }
+        Collections.sort(datas);
         final int size = datas.size();
-
 
         mHandle.postDelayed(new Runnable() {
             @Override
@@ -158,7 +169,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 adapter.notifyDataSetChanged();
                 sr_main_refresh.setRefreshing(false);
                 if (size > oldSize) {
-                    lv_main_datas.smoothScrollBy(Screenutil.dp2px(mContext, 50), 500);
+                    View itemView = lv_main_datas.getAdapter().getView(oldSize, null, lv_main_datas);
+                    itemView.measure(0, 0);
+                    lv_main_datas.smoothScrollBy(itemView.getMeasuredHeight(), 500);
                 } else {
                     ToastUtil.showShortToast(mContext, "没有更多数据了");
                 }

@@ -31,11 +31,14 @@
 package com.lb.wecharenglish.server;
 
 import android.content.Context;
+import android.text.Html;
 import android.text.TextUtils;
 
+import com.lb.utils.LogUtil;
 import com.lb.wecharenglish.dao.EnglishDao;
 import com.lb.wecharenglish.dao.impl.EnglishImpl;
 import com.lb.wecharenglish.domain.EnglishBean;
+import com.lb.wecharenglish.domain.EnglishImgBean;
 import com.lb.wecharenglish.net.Urls;
 
 import org.jsoup.Jsoup;
@@ -84,6 +87,18 @@ public class EnglishServer {
         //先判断数据库中是否已经包含该对象，已经包含就不用添加
         EnglishBean dbBean = findById(context, bean.getId());
         if (null != dbBean) return false;
+
+        //解析出img标签，添加进数据库
+        Document document = Jsoup.parse(bean.getDesc());
+        Elements imgElements = document.select("img");
+
+        for (int j = 0; j < imgElements.size(); j++) {
+            Element imgElement = imgElements.get(j);
+            String url = imgElement.attr("src");
+            EnglishImgBean imgBean = new EnglishImgBean(url, bean.getId());
+            //向数据库插入一张图片
+            new EnglishImgServer().add(context, imgBean);
+        }
         //调用dao
         return dao.add(context, bean);
     }
@@ -158,7 +173,8 @@ public class EnglishServer {
                 //创建对象进行封装
                 EnglishBean bean = new EnglishBean();
                 bean.setTitle(title);
-                bean.setDesc(desc);
+
+                bean.setDesc(Html.fromHtml(desc).toString());
                 bean.setDate(new Date(date).getTime());
 
                 list.add(bean);

@@ -34,6 +34,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.Html;
 
 import com.lb.utils.LogUtil;
 import com.lb.wecharenglish.dao.EnglishDao;
@@ -91,7 +92,7 @@ public class EnglishImpl implements EnglishDao {
         EnglishDatabaseHelper helper = new EnglishDatabaseHelper(context);
         SQLiteDatabase db = helper.getReadableDatabase();
         //进行查询
-        Cursor cursor = db.query(EnglishDatabaseHelper.TABLE_NAME, null, EnglishDatabaseHelper.T_ID + "=?", new String[]{id}, null, null, null);
+        Cursor cursor = db.query(EnglishDatabaseHelper.TABLE_NAME, null, EnglishDatabaseHelper.T_ID + "=?", new String[]{id}, null, null, EnglishDatabaseHelper.T_DATE + " ASC");
 
         if (null != cursor) {
             if (cursor.moveToNext()) {
@@ -104,7 +105,7 @@ public class EnglishImpl implements EnglishDao {
                 EnglishBean bean = new EnglishBean();
                 bean.setId();
                 bean.setTitle(title);
-                bean.setDesc(desc);
+                bean.setDesc(Html.fromHtml(desc).toString());
                 bean.setDate(date);
                 bean.setLoadDate(loadDate);
                 bean.setShow(dbIsShow != 0);
@@ -154,7 +155,7 @@ public class EnglishImpl implements EnglishDao {
             EnglishBean bean = new EnglishBean();
             bean.setId();
             bean.setTitle(title);
-            bean.setDesc(desc);
+            bean.setDesc(Html.fromHtml(desc).toString());
             bean.setDate(date);
             bean.setLoadDate(loadDate);
             bean.setShow(dbIsShow != 0);
