@@ -146,6 +146,7 @@ public class EnglishImpl implements EnglishDao {
         }
 
         while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_ID));
             String title = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_TITLE));
             String desc = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_DESC));
             long date = cursor.getLong(cursor.getColumnIndex(EnglishDatabaseHelper.T_DATE));
@@ -153,7 +154,7 @@ public class EnglishImpl implements EnglishDao {
             int dbIsShow = cursor.getInt(cursor.getColumnIndex(EnglishDatabaseHelper.T_IS_SHOW));
 
             EnglishBean bean = new EnglishBean();
-            bean.setId();
+            bean.setId(id);
             bean.setTitle(title);
             bean.setDesc(Html.fromHtml(desc).toString());
             bean.setDate(date);

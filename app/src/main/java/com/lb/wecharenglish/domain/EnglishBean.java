@@ -30,9 +30,13 @@
 //                  不见满街漂亮妹，哪个归得程序员？
 package com.lb.wecharenglish.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.lb.utils.EncryptUtil;
+
+import java.io.Serializable;
 
 /**
  * 项目名称：ysp-android<br>
@@ -41,7 +45,7 @@ import com.lb.utils.EncryptUtil;
  * 时间：2016/7/3 22:31<br>
  * 类描述：英语每日一句对应的javabean封装 <br>
  */
-public class EnglishBean implements Comparable<EnglishBean> {
+public class EnglishBean implements Serializable, Comparable<EnglishBean> {
 
     private String id;//id
     private String title;//标题
@@ -56,6 +60,10 @@ public class EnglishBean implements Comparable<EnglishBean> {
 
     public void setId() {
         this.id = EncryptUtil.md5(getTitle() + getDate());
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -147,4 +155,6 @@ public class EnglishBean implements Comparable<EnglishBean> {
         }
         return (int) (englishBean.getDate() - getDate());
     }
+
+
 }

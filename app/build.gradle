@@ -25,4 +25,5 @@ dependencies {
     compile 'com.lb:utils:1.0.2'
     compile 'org.jsoup:jsoup:1.9.2'
     compile 'com.android.support:cardview-v7:24.0.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 }

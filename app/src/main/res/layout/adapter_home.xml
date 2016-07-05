@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:paddingLeft="16dp"
-              android:paddingRight="16dp"
-              android:paddingTop="8dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
                     android:maxLines="1"
                     android:textColor="@color/color_txt_black"
                     android:textSize="@dimen/size_txt_big"
-                    tools:text="Title"/>
+                    tools:text="Title" />
 
                 <TextView
                     android:id="@+id/tv_item_date"
@@ -46,20 +46,33 @@
                     android:layout_marginLeft="5dp"
                     android:textColor="@color/color_txt_gray"
                     android:textSize="@dimen/size_txt_small"
-                    tools:text="2011-11-11"/>
+                    tools:text="2011-11-11" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_item_desc"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:ellipsize="end"
-                android:maxLines="6"
-                android:textColor="#3a3a3a"
-                android:textSize="@dimen/size_txt_small"
-                tools:text="This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!"/>
+                android:orientation="horizontal">
 
+                <ImageView
+                    android:id="@+id/iv_itme_img"
+                    android:layout_width="1dp"
+                    android:layout_height="1dp"
+                    android:scaleType="fitXY"
+                    tools:background="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/tv_item_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:ellipsize="end"
+                    android:maxLines="6"
+                    android:textColor="#3a3a3a"
+                    android:textSize="@dimen/size_txt_small"
+                    tools:text="This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!" />
+            </LinearLayout>
         </LinearLayout>
 
 

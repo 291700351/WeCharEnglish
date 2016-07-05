@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><!--每日一句的详情界面-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tv_detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_txt_black"
+            android:textSize="@dimen/size_txt_title"
+            tools:text="Title" />
+
+        <TextView
+            android:id="@+id/tv_detail_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/color_txt_gray"
+            android:textSize="@dimen/size_txt_center"
+            tools:text="2011-11-11" />
+
+
+        <TextView
+            android:id="@+id/tv_detail_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/color_txt_black"
+            android:textSize="@dimen/size_txt_center"
+            tools:text="desc" />
+    </LinearLayout>
+</ScrollView>

@@ -104,4 +104,13 @@ public class EnglishImgBean {
         result = 31 * result + (iEnglishId != null ? iEnglishId.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "EnglishImgBean{" +
+                "iId='" + iId + '\'' +
+                ", iUrl='" + iUrl + '\'' +
+                ", iEnglishId='" + iEnglishId + '\'' +
+                '}';
+    }
 }

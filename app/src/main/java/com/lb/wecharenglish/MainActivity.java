@@ -1,23 +1,22 @@
 package com.lb.wecharenglish;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.lb.utils.LogUtil;
 import com.lb.utils.ToastUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.domain.EnglishBean;
+import com.lb.wecharenglish.global.Keys;
 import com.lb.wecharenglish.server.EnglishServer;
 import com.lb.wecharenglish.ui.activity.BaseActivity;
+import com.lb.wecharenglish.ui.activity.EnglishDetailActivity;
 import com.lb.wecharenglish.ui.adapter.HomeAdapter;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -109,6 +108,17 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
             }
         });
+
+        //设置条目点击事件
+        lv_main_datas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                EnglishBean englishBean = datas.get(i - lv_main_datas.getHeaderViewsCount());
+                Intent intent = new Intent(mContext, EnglishDetailActivity.class);
+                intent.putExtra(Keys.KEY_ENGLISH_BEAN, englishBean);
+                startActivity(intent);
+            }
+        });
     }
 
     //===Desc:本类使用的方法===============================================================================================
@@ -120,7 +130,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 List<EnglishBean> remoteData = new EnglishServer().getDataFromRemote();
                 //调用业务层进行添加
                 final int oldSize = datas.size();
-                LogUtil.e(this,"---------------------------------");
 
                 if (null != remoteData && remoteData.size() != 0) {
                     for (EnglishBean bean : remoteData) {
