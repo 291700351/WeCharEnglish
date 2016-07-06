@@ -1,22 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F2F2F2"
-    tools:context="com.lb.wecharenglish.MainActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F2F2F2"
+                tools:context="com.lb.wecharenglish.MainActivity">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/sr_main_refresh"
+    <android.support.v4.widget.DrawerLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/lv_main_datas"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:divider="@android:color/transparent"
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/sr_main_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/lv_main_datas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0dp"
+                android:listSelector="@android:color/transparent"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <LinearLayout
+            android:id="@+id/left_drawer"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
             android:dividerHeight="0dp"
-            android:listSelector="@android:color/transparent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:background="#FFF"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="test"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="test"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="test"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="test"/>
+
+        </LinearLayout>
+    </android.support.v4.widget.DrawerLayout>
+
 </RelativeLayout>
