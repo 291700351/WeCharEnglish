@@ -32,6 +32,7 @@ package com.lb.wecharenglish.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,9 +107,9 @@ public class HomeAdapter extends BaseAdapter {
         SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm:ss", Locale.CHINESE);
         holder.tv_item_date.setText(format.format(new Date(bean.getDate())));
 
-        String br = EncryptUtil.md5(mContext.getResources().getString(com.lb.utils.R.string.app_name));
-        String desc = bean.getDesc().replace(br, "\n");
-        holder.tv_item_desc.setText(desc);
+//        String br = EncryptUtil.md5(mContext.getResources().getString(com.lb.utils.R.string.app_name));
+//        String desc = bean.getDesc().replace(br, "\n");
+        holder.tv_item_desc.setText(Html.fromHtml(bean.getDesc()));
         holder.tv_item_desc.measure(0, 0);
         //查询数据库获取第一张图片
         final List<EnglishImgBean> imgs = new EnglishImgServer().getImgsByEnglishId(mContext, bean.getId());

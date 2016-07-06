@@ -156,10 +156,11 @@ public class EnglishImpl implements EnglishDao {
             EnglishBean bean = new EnglishBean();
             bean.setId(id);
             bean.setTitle(title);
-            bean.setDesc(Html.fromHtml(desc).toString());
+            bean.setDesc(desc);
             bean.setDate(date);
             bean.setLoadDate(loadDate);
             bean.setShow(dbIsShow != 0);
+
             list.add(bean);
         }
 

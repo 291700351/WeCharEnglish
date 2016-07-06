@@ -30,6 +30,7 @@
 //                  不见满街漂亮妹，哪个归得程序员？
 package com.lb.wecharenglish.ui.activity;
 
+import android.text.Html;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -108,11 +109,11 @@ public class EnglishDetailActivity extends BaseActivity {
         String time = new SimpleDateFormat(
                 "yyyy-MM-dd HH:mm:ss", Locale.CHINESE).format(new Date(englishBean.getDate()));
         tv_detail_time.setText(time);
-        String br = EncryptUtil.md5(mContext.getResources().getString(com.lb.utils.R.string.app_name));
-        String desc = englishBean.getDesc().replace(br, "\n");
-        if (desc.startsWith("\n"))
-            desc = desc.substring("\n".length());
-        tv_detail_desc.setText(desc);
+//        String br = EncryptUtil.md5(mContext.getResources().getString(com.lb.utils.R.string.app_name));
+//        String desc = englishBean.getDesc().replace(br, "\n");
+//        if (desc.startsWith("\n"))
+//            desc = desc.substring("\n".length());
+        tv_detail_desc.setText(Html.fromHtml(englishBean.getDesc()));
     }
 
     @Override
