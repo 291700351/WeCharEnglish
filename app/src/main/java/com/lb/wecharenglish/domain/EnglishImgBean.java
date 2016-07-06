@@ -30,8 +30,6 @@
 //                  不见满街漂亮妹，哪个归得程序员？
 package com.lb.wecharenglish.domain;
 
-import com.lb.utils.EncryptUtil;
-
 /**
  * 项目名称：WeCharEnglish<br>
  * 作者：Ice<br>
@@ -46,26 +44,12 @@ public class EnglishImgBean {
     private String iEnglishId;
     //===Desc:构造函数==========================================================================================
 
-    public EnglishImgBean(String url, String englishId) {
-        this.iId = EncryptUtil.desEncrypt(
-                getClass().getSimpleName(), url
-                        + "--EnglishId:"
-                        + englishId
-                        + "--Time:"
-                        + System.currentTimeMillis());
-        this.iUrl = url;
-        this.iEnglishId = englishId;
-    }
-
-    public EnglishImgBean() {
-    }
-
     public String getId() {
         return iId;
     }
 
     public void setId(String id) {
-        this.iId = iId;
+        this.iId = id;
     }
 
     public String getUrl() {

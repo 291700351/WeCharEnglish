@@ -31,8 +31,6 @@
 package com.lb.wecharenglish.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,22 +38,21 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.lb.utils.EncryptUtil;
-//import com.lb.utils.LogUtil;
-import com.lb.utils.LogUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.R;
 import com.lb.wecharenglish.domain.EnglishBean;
 import com.lb.wecharenglish.domain.EnglishImgBean;
 import com.lb.wecharenglish.server.EnglishImgServer;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+//import com.lb.utils.LogUtil;
 
 /**
  * 项目名称：ysp-android<br>
@@ -107,59 +104,21 @@ public class HomeAdapter extends BaseAdapter {
         SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm:ss", Locale.CHINESE);
         holder.tv_item_date.setText(format.format(new Date(bean.getDate())));
 
-//        String br = EncryptUtil.md5(mContext.getResources().getString(com.lb.utils.R.string.app_name));
-//        String desc = bean.getDesc().replace(br, "\n");
-        holder.tv_item_desc.setText(Html.fromHtml(bean.getDesc()));
-        holder.tv_item_desc.measure(0, 0);
+        String desc = bean.getDesc();
+        Pattern p_html = Pattern.compile("<[^>]+>", Pattern.CASE_INSENSITIVE);
+        Matcher m_html = p_html.matcher(desc);
+        desc = m_html.replaceAll(""); // 过滤html标签
+        //noinspection deprecation
+        holder.tv_item_desc.setText(desc);
+
         //查询数据库获取第一张图片
         final List<EnglishImgBean> imgs = new EnglishImgServer().getImgsByEnglishId(mContext, bean.getId());
-//        LogUtil.log(this, bean);
-//        LogUtil.log(this, imgs);
-//        LogUtil.log(this, "======================");
-
-
-        holder.iv_itme_img.setTag(i);
-
-        if (holder.iv_itme_img.getTag() != null && holder.iv_itme_img.getTag().equals(i)) {
-            if (imgs.size() == 0) {
-                holder.iv_itme_img.setVisibility(View.GONE);
-            } else {
-
-                String url = imgs.get(0).getUrl();
-                holder.iv_itme_img.setVisibility(View.VISIBLE);
-                //根据文本高度动态计算图片显示大小
-                final int imgHeight = holder.tv_item_desc.getMeasuredHeight();
-                ImageLoader.getInstance().loadImage(url, new ImageLoadingListener() {
-                    @Override
-                    public void onLoadingStarted(String imageUri, View view) {
-
-                    }
-
-                    @Override
-                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-
-                    }
-
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        int width = loadedImage.getWidth();
-                        int height = loadedImage.getHeight();
-                        //计算比例 width/height = viewWidth/viewHeight
-
-                        holder.iv_itme_img.getLayoutParams().width = width / height * imgHeight;
-                        holder.iv_itme_img.getLayoutParams().height = imgHeight;
-                        holder.iv_itme_img.requestLayout();
-                    }
-
-                    @Override
-                    public void onLoadingCancelled(String imageUri, View view) {
-
-                    }
-                });
-
-
-                ImageLoader.getInstance().displayImage(url, holder.iv_itme_img);
-            }
+        if (imgs.size() == 0) {
+            holder.iv_itme_img.setVisibility(View.GONE);
+        } else {
+            String url = imgs.get(0).getUrl();
+            holder.iv_itme_img.setVisibility(View.VISIBLE);
+            ImageLoader.getInstance().displayImage(url, holder.iv_itme_img);
         }
         return view;
     }

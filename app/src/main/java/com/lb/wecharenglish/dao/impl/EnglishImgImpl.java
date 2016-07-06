@@ -37,7 +37,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.lb.wecharenglish.dao.EnglishImgDao;
 import com.lb.wecharenglish.db.EnglishDatabaseHelper;
-import com.lb.wecharenglish.domain.EnglishBean;
 import com.lb.wecharenglish.domain.EnglishImgBean;
 
 import java.util.ArrayList;

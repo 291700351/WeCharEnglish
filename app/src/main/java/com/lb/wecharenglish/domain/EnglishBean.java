@@ -30,8 +30,6 @@
 //                  不见满街漂亮妹，哪个归得程序员？
 package com.lb.wecharenglish.domain;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.lb.utils.EncryptUtil;

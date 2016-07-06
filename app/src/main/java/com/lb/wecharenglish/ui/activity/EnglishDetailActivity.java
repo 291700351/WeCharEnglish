@@ -32,11 +32,8 @@ package com.lb.wecharenglish.ui.activity;
 
 import android.text.Html;
 import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
 import android.widget.TextView;
 
-import com.lb.utils.EncryptUtil;
 import com.lb.utils.LogUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.R;
@@ -46,7 +43,6 @@ import com.lb.wecharenglish.global.Keys;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.logging.SimpleFormatter;
 
 /**
  * 项目名称：ysp-android<br>
@@ -109,11 +105,14 @@ public class EnglishDetailActivity extends BaseActivity {
         String time = new SimpleDateFormat(
                 "yyyy-MM-dd HH:mm:ss", Locale.CHINESE).format(new Date(englishBean.getDate()));
         tv_detail_time.setText(time);
-//        String br = EncryptUtil.md5(mContext.getResources().getString(com.lb.utils.R.string.app_name));
-//        String desc = englishBean.getDesc().replace(br, "\n");
-//        if (desc.startsWith("\n"))
-//            desc = desc.substring("\n".length());
-        tv_detail_desc.setText(Html.fromHtml(englishBean.getDesc()));
+        String desc = englishBean.getDesc();
+
+        desc = desc.replaceAll("<img[^>]*>", " ");
+        LogUtil.e(this, desc);
+
+
+        //noinspection deprecation
+        tv_detail_desc.setText(Html.fromHtml(desc));
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.domain.EnglishBean;
 import com.lb.wecharenglish.global.Keys;
 import com.lb.wecharenglish.server.EnglishServer;
+import com.lb.wecharenglish.service.TimingTaskService;
 import com.lb.wecharenglish.ui.activity.BaseActivity;
 import com.lb.wecharenglish.ui.activity.EnglishDetailActivity;
 import com.lb.wecharenglish.ui.adapter.HomeAdapter;
@@ -39,6 +40,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     //===Desc:复写父类的方法===============================================================================================
     @Override
     protected void initData() {
+        Intent service = new Intent(mContext, TimingTaskService.class);
+        startService(service);
+
         datas = new ArrayList<>();
         adapter = new HomeAdapter(mContext, datas);
     }
@@ -161,7 +165,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         final int oldSize = datas.size();
         List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, pageNo, pageSize);
-        LogUtil.e(this, dbList.get(0).getDate());
 
         //数据去重
         for (EnglishBean bean : dbList) {
