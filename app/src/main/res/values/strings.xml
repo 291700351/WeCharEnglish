@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">WeCharEnglish</string>
+
+
+    <string name="txt_setting">设置</string>
+    <string name="txt_username">个性签名</string>
+    <string name="txt_synchronous">同步远程数据库</string>
+    <string name="txt_backup">备份数据</string>
+
+
 </resources>

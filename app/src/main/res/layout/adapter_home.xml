@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:paddingBottom="4dp"
-              android:paddingLeft="16dp"
-              android:paddingRight="16dp"
-              android:paddingTop="4dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="4dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="4dp">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         app:cardBackgroundColor="@android:color/white"
-        app:cardElevation="15dp">
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true">
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@android:color/transparent"
+            android:background="@android:color/white"
             android:orientation="vertical">
 
             <LinearLayout
@@ -38,7 +40,7 @@
                     android:maxLines="1"
                     android:textColor="@color/color_txt_black"
                     android:textSize="@dimen/size_txt_big"
-                    tools:text="Title"/>
+                    tools:text="Title" />
 
                 <TextView
                     android:id="@+id/tv_item_date"
@@ -47,7 +49,7 @@
                     android:layout_marginLeft="5dp"
                     android:textColor="@color/color_txt_gray"
                     android:textSize="@dimen/size_txt_small"
-                    tools:text="2011-11-11"/>
+                    tools:text="2011-11-11" />
             </LinearLayout>
 
             <LinearLayout
@@ -63,7 +65,7 @@
                     android:layout_height="match_parent"
                     android:contentDescription="@null"
                     android:scaleType="fitXY"
-                    tools:background="@mipmap/ic_launcher"/>
+                    tools:background="@mipmap/ic_launcher" />
 
                 <TextView
                     android:id="@+id/tv_item_desc"
@@ -75,7 +77,7 @@
                     android:maxLines="6"
                     android:textColor="#3a3a3a"
                     android:textSize="@dimen/size_txt_small"
-                    tools:text="This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!"/>
+                    tools:text="This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!" />
             </LinearLayout>
         </LinearLayout>
 

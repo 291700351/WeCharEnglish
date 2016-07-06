@@ -9,5 +9,8 @@
     <dimen name="size_txt_center">14sp</dimen>
     <dimen name="size_txt_small">12sp</dimen>
 
+
+    <dimen name="size_border_width_height">1px</dimen>
+
 </resources>
 

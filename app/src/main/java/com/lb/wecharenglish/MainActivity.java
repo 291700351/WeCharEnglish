@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.lb.utils.LogUtil;
 import com.lb.utils.ToastUtil;
@@ -17,6 +20,7 @@ import com.lb.wecharenglish.server.EnglishServer;
 import com.lb.wecharenglish.service.TimingTaskService;
 import com.lb.wecharenglish.ui.activity.BaseActivity;
 import com.lb.wecharenglish.ui.activity.EnglishDetailActivity;
+import com.lb.wecharenglish.ui.activity.SettingActivity;
 import com.lb.wecharenglish.ui.adapter.HomeAdapter;
 
 import java.util.ArrayList;
@@ -37,6 +41,23 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private List<EnglishBean> datas;
     private HomeAdapter adapter;
 
+    //===Desc:侧滑菜单控件===============================================================================================
+
+    /**
+     * 侧滑菜单控件
+     */
+    private ScrollView sv_main_leftmenu;
+
+    /**
+     * 显示用户名的文本控件
+     */
+    private TextView tv_main_menu_username;
+
+    /**
+     * 侧滑菜单设置按钮
+     */
+    private TextView tv_main_menu_setting;
+
     //===Desc:复写父类的方法===============================================================================================
     @Override
     protected void initData() {
@@ -56,6 +77,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     protected void findView() {
         sr_main_refresh = ViewUtil.findViewById(this, R.id.sr_main_refresh);
         lv_main_datas = ViewUtil.findViewById(this, R.id.lv_main_datas);
+        //侧滑菜单
+        sv_main_leftmenu = ViewUtil.findViewById(this, R.id.sv_main_leftmenu);
+        tv_main_menu_username = ViewUtil.findViewById(this, R.id.tv_main_menu_username);
+        tv_main_menu_setting = ViewUtil.findViewById(this, R.id.tv_main_menu_setting);
     }
 
     @Override
@@ -80,6 +105,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         }
         Collections.sort(datas);
         adapter.notifyDataSetChanged();
+
+        //初始化侧滑菜单宽度
+        initMenuData();
+
     }
 
     @Override
@@ -123,6 +152,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 startActivity(intent);
             }
         });
+
+        //设置按钮点击事件
+        tv_main_menu_setting.setOnClickListener(this);
     }
 
     //===Desc:本类使用的方法===============================================================================================
@@ -193,6 +225,20 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         isLoadMore = false;
     }
 
+    /**
+     * 初始化侧滑菜单部分的控件数据显示
+     */
+    private void initMenuData() {
+        //获取屏幕宽度
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        //noinspection deprecation
+        int width = wm.getDefaultDisplay().getWidth();
+        sv_main_leftmenu.getLayoutParams().width = width * 70 / 100;
+        sv_main_leftmenu.requestLayout();
+        //设置用户名
+        tv_main_menu_username.setText("沙飞");
+    }
+
     //===Desc:刷新的监听===============================================================================================
     @Override
     public void onRefresh() {
@@ -200,6 +246,16 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             loadMore();
         } else {
             loadData();
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tv_main_menu_setting://设置按钮点击事件处理
+                Intent settingIntent = new Intent(mContext, SettingActivity.class);
+                startActivity(settingIntent);
+                break;
         }
     }
 

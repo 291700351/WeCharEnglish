@@ -30,15 +30,19 @@
 //                  不见满街漂亮妹，哪个归得程序员？
 package com.lb.wecharenglish.ui.activity;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.lb.utils.LogUtil;
 import com.lb.wecharenglish.R;
+import com.lb.wecharenglish.utils.PermissionUtil;
 
 /**
  * 项目名称：ysp-android<br>
@@ -47,7 +51,7 @@ import com.lb.wecharenglish.R;
  * 时间：2016/7/3 23:52<br>
  * 类描述：应用程序中activity的基类 <br>
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
     //===Desc:成员变量===============================================================================
 
     /**
@@ -76,8 +80,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         View rootView = createView();
         if (null == rootView)
-            throw new IllegalStateException("You must return a not null view to show at the createView() method......" );
-        LogUtil.log(this, getClass().getSimpleName() + " onCreate..." );
+            throw new IllegalStateException("You must return a not null view to show at the createView() method......");
+        LogUtil.log(this, getClass().getSimpleName() + " onCreate...");
 
         setContentView(rootView);
 
@@ -126,5 +130,52 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 给界面中的控件设置监听的方法
      */
     protected void setListener() {
+    }
+
+    //===Desc:请求权限的回调===============================================================================================
+
+
+    /**
+     * 但界面需要申请权限时，申请权限成功回调这个方法
+     */
+    protected void requestPermissionsSuccess() {
+
+    }
+
+    /**
+     * 但界面需要申请权限时，申请权限失败回调这个方法
+     */
+    protected void requestPermissionsFail() {
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // 如果请求被拒绝，那么通常grantResults数组为空
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            //申请成功，进行相应操作
+            requestPermissionsSuccess();
+
+        } else {
+            //申请失败，可以继续向用户解释。
+            requestPermissionsFail();
+        }
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public boolean shouldShowRequestPermissionRationale(@NonNull String permission) {
+//        if (requestPermissionCode == EXTERNAL_STORAGE_REQ_CODE)
+        int permissionCode = PermissionUtil.EXTERNAL_STORAGE_REQ_CODE;
+        if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            permissionCode = PermissionUtil.EXTERNAL_STORAGE_REQ_CODE;
+        return super.shouldShowRequestPermissionRationale(permission);
+//        if (!b)
+//            PermissionUtil.requestPermission(this, permissionCode);
+//        else {
+//            return true;
+//        }
+//        return false;
     }
 }

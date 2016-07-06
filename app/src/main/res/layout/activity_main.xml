@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#F2F2F2"
-                tools:context="com.lb.wecharenglish.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F2F2F2"
+    tools:context="com.lb.wecharenglish.MainActivity">
 
     <android.support.v4.widget.DrawerLayout
         android:layout_width="match_parent"
@@ -22,39 +22,53 @@
                 android:layout_height="wrap_content"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="0dp"
-                android:listSelector="@android:color/transparent"/>
+                android:listSelector="@android:color/transparent" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
-        <LinearLayout
-            android:id="@+id/left_drawer"
-            android:layout_width="240dp"
+        <ScrollView
+            android:id="@+id/sv_main_leftmenu"
+            android:layout_width="10dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:dividerHeight="0dp"
-            android:background="#FFF"
-            android:orientation="vertical">
+            android:background="@color/color_menu_bg"
+            android:gravity="center_horizontal">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="test"/>
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="test"/>
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/icon_head_default"
+                    android:contentDescription="@null" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="test"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="test"/>
+                <TextView
+                    android:id="@+id/tv_main_menu_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/color_txt_white"
+                    android:textSize="@dimen/size_txt_small"
+                    tools:text="shafei" />
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_main_menu_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/txt_setting"
+                    android:textColor="@color/color_txt_white"
+                    android:textSize="@dimen/size_txt_center" />
+
+            </LinearLayout>
+        </ScrollView>
     </android.support.v4.widget.DrawerLayout>
-
 </RelativeLayout>

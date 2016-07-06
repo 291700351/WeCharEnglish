@@ -4,8 +4,15 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="color_txt_white">#EEEEEE</color>
     <color name="color_txt_black">#333333</color>
     <color name="color_txt_gray">#66333333</color>
+
+    <color name="color_menu_bg">#103869</color>
+
+    <!--边框颜色-->
+    <color name="border_color">#CFCFCF</color>
+    <color name="color_blue">#429EE7</color>
 
 
 </resources>

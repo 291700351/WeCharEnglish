@@ -120,6 +120,11 @@ public class EnglishDetailActivity extends BaseActivity {
 
     }
 
+    @Override
+    public void onClick(View view) {
+
+    }
+
     //===Desc:本类中使用的方法===============================================================================
 
 }

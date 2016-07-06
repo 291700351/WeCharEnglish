@@ -43,6 +43,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.utils.StorageUtils;
+import com.yolanda.nohttp.NoHttp;
 
 import java.io.File;
 
@@ -61,6 +62,8 @@ public class WeCharApplication extends Application {
         LogUtil.initLog(true, LogUtil.Level.e);
 
         initImageLoader(this);
+
+        NoHttp.init(this);
     }
 
     //===Desc:本类使用的方法===============================================================================================

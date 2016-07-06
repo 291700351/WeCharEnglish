@@ -44,4 +44,8 @@ public interface Keys {
      */
     String KEY_ENGLISH_BEAN = "englishBean";
 
+    /**
+     * 用户名
+     */
+    String USER_NAME = "user_name";
 }

@@ -12,6 +12,6 @@ public interface Urls {
     /**
      * 每日一句的url
      */
-//    String ENGLISH_URL = "http://192.168.1.104:8080/data.xml";
-    String ENGLISH_URL = "http://rss.iwgc.cn/rss/6307-50f3f36fcf4ddfdbb4be047f5ced0daf4425";
+    String ENGLISH_URL = "http://192.168.1.104:8080/data.xml";
+//    String ENGLISH_URL = "http://rss.iwgc.cn/rss/6307-50f3f36fcf4ddfdbb4be047f5ced0daf4425";
 }
