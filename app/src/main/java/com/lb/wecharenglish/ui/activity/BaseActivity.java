@@ -52,6 +52,13 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     //===Desc:成员变量===============================================================================
 
     /**
+     * 是否是返回当前界面
+     * true：是
+     * false：不是
+     */
+    protected boolean isResume;
+
+    /**
      * 显示在界面上的view
      */
     protected View rootView;
@@ -71,6 +78,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        isResume = false;
+
         mContext = this;
 
         initData();
@@ -84,12 +93,20 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
         findView();
 
+
+    }
+
+    @Override
+    protected void onResume() {
+
         setViewData();
 
         setListener();
 
-    }
+        super.onResume();
 
+        isResume = true;
+    }
 
     //===Desc:本类中使用的方法===============================================================================
 
@@ -163,16 +180,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public boolean shouldShowRequestPermissionRationale(@NonNull String permission) {
-//        if (requestPermissionCode == EXTERNAL_STORAGE_REQ_CODE)
-        int permissionCode = PermissionUtil.EXTERNAL_STORAGE_REQ_CODE;
-        if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-            permissionCode = PermissionUtil.EXTERNAL_STORAGE_REQ_CODE;
+//        int permissionCode = PermissionUtil.EXTERNAL_STORAGE_REQ_CODE;
+//        if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+//            permissionCode = PermissionUtil.EXTERNAL_STORAGE_REQ_CODE;
         return super.shouldShowRequestPermissionRationale(permission);
-//        if (!b)
-//            PermissionUtil.requestPermission(this, permissionCode);
-//        else {
-//            return true;
-//        }
-//        return false;
     }
 }

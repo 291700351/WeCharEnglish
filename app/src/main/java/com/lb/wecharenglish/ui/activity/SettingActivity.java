@@ -30,7 +30,14 @@
 //                  不见满街漂亮妹，哪个归得程序员？
 package com.lb.wecharenglish.ui.activity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Handler;
+import android.os.Message;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
@@ -51,6 +58,7 @@ import com.lb.wecharenglish.R;
 import com.lb.wecharenglish.global.Keys;
 import com.lb.wecharenglish.net.Urls;
 import com.lb.wecharenglish.server.EnglishServer;
+import com.lb.wecharenglish.utils.CommonUtil;
 import com.lb.wecharenglish.utils.PermissionUtil;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.NoHttp;
@@ -72,9 +80,33 @@ import java.io.IOException;
 public class SettingActivity extends BaseActivity {
 
     /**
+     * 开始下载
+     */
+    private static final int START_DOWNLOAD = 0;
+    /**
+     * 下载结束或者失败
+     */
+    private static final int DOWNLOAD_FINISH = 1;
+
+    /**
      * 使用nohttp下载
      */
     private DownloadRequest downloadRequest;
+
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case START_DOWNLOAD:
+                    pb_setting_synchronousing.setVisibility(View.VISIBLE);
+                    break;
+                case DOWNLOAD_FINISH:
+                    pb_setting_synchronousing.setVisibility(View.GONE);
+                    break;
+            }
+        }
+    };
 
     //===Desc:成员变量===============================================================================
 
@@ -98,6 +130,9 @@ public class SettingActivity extends BaseActivity {
     //===Desc:复写父类中的方法===============================================================================
     @Override
     protected View createView() {
+        String deviceInfo = CommonUtil.getDeviceInfo(mContext);
+        LogUtil.log(this,deviceInfo);
+
         return View.inflate(mContext, R.layout.activity_setting, null);
     }
 
@@ -237,7 +272,7 @@ public class SettingActivity extends BaseActivity {
     /**
      * 同步远程数据库的方法
      */
-    private void synchronous(String url, String filePath, String fileName) {
+    private void synchronous(final String url, final String filePath, final String fileName) {
         if (downloadRequest != null && downloadRequest.isStarted() && !downloadRequest.isFinished()) {
             //说明正在下载，不用管
             return;
@@ -264,14 +299,14 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void onDownloadError(int what, Exception exception) {
                 LogUtil.log(this, exception);
-                pb_setting_synchronousing.setVisibility(View.GONE);
+                mHandler.sendEmptyMessage(DOWNLOAD_FINISH);
                 ToastUtil.showShortToast(mContext, "同步远程数据库失败，请重试");
             }
 
             @Override
             public void onStart(int what, boolean isResume, long rangeSize, Headers responseHeaders, long allCount) {
                 LogUtil.log(this, "开始下载");
-                pb_setting_synchronousing.setVisibility(View.VISIBLE);//显示进度条
+                mHandler.sendEmptyMessage(START_DOWNLOAD);
             }
 
             @Override
@@ -283,14 +318,14 @@ public class SettingActivity extends BaseActivity {
             public void onFinish(int what, String filePath) {
                 //下载完成，打开数据库
                 SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(filePath, null);
-                int count = new EnglishServer().copyDataFromDatabas(mContext, db);
+                final int count = new EnglishServer().copyDataFromDatabas(mContext, db);
                 db.close();
                 //删除已经下载的数据
                 File file = new File(filePath);
                 //noinspection ResultOfMethodCallIgnored
                 file.delete();
                 ToastUtil.showShortToast(mContext, "更新了" + count + "条数据");
-                pb_setting_synchronousing.setVisibility(View.GONE);
+                mHandler.sendEmptyMessage(DOWNLOAD_FINISH);
             }
 
             @Override
@@ -299,8 +334,61 @@ public class SettingActivity extends BaseActivity {
                 pb_setting_synchronousing.setVisibility(View.GONE);
             }
         });
+    }
 
+    private void test(Context context) {
+        StringBuilder deviceId = new StringBuilder();
+// 渠道标志
+        deviceId.append("a");
 
+        try {
+
+//wifi mac地址
+            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo info = wifi.getConnectionInfo();
+            String wifiMac = info.getMacAddress();
+            if (!TextUtils.isEmpty(wifiMac)) {
+                deviceId.append("wifi");
+                deviceId.append(wifiMac);
+                LogUtil.log("getDeviceId : ", deviceId.toString());
+//                return deviceId.toString();
+            }
+
+//IMEI（imei）
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            String imei = tm.getDeviceId();
+            if (!TextUtils.isEmpty(imei)) {
+                deviceId.append("imei");
+                deviceId.append(imei);
+                LogUtil.log("getDeviceId : ", deviceId.toString());
+//                return deviceId.toString();
+            }
+
+//序列号（sn）
+            String sn = tm.getSimSerialNumber();
+            if (!TextUtils.isEmpty(sn)) {
+                deviceId.append("sn");
+                deviceId.append(sn);
+                LogUtil.log("getDeviceId : ", deviceId.toString());
+//                return deviceId.toString();
+            }
+
+//如果上面都没有， 则生成一个id：随机码
+//            String uuid = getUUID(context);
+//            if(!isEmpty(uuid)){
+//                deviceId.append("id");
+//                deviceId.append(uuid);
+////                PALog.e("getDeviceId : ", deviceId.toString());
+////                return deviceId.toString();
+//            }
+        } catch (Exception e) {
+            e.printStackTrace();
+//            deviceId.append("id").append(getUUID(context));
+        }
+
+//        PALog.e("getDeviceId : ", deviceId.toString());
+
+//        return deviceId.toString();
     }
 
 

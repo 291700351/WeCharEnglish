@@ -4,14 +4,18 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.lb.utils.CacheUtil;
+import com.lb.utils.LogUtil;
 import com.lb.utils.ToastUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -57,7 +61,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     /**
      * 侧滑菜单设置按钮
      */
-    private TextView tv_main_menu_setting;
+    private LinearLayout ll_main_menu_setting;
 
     //===Desc:复写父类的方法===============================================================================================
     @Override
@@ -82,19 +86,21 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         dl_main_drawermenu = ViewUtil.findViewById(this, R.id.dl_main_drawermenu);
         sv_main_leftmenu = ViewUtil.findViewById(this, R.id.sv_main_leftmenu);
         tv_main_menu_username = ViewUtil.findViewById(this, R.id.tv_main_menu_username);
-        tv_main_menu_setting = ViewUtil.findViewById(this, R.id.tv_main_menu_setting);
+        ll_main_menu_setting = ViewUtil.findViewById(this, R.id.ll_main_menu_setting);
     }
 
     @Override
     protected void setViewData() {
         lv_main_datas.setAdapter(adapter);
-        sr_main_refresh.post(new Runnable() {
-            @Override
-            public void run() {
-                sr_main_refresh.setRefreshing(true);
-                onRefresh();
-            }
-        });
+        //如果是返回当前界面，不是重新创建就不请求服务器加载数据了
+        if (!isResume)
+            sr_main_refresh.post(new Runnable() {
+                @Override
+                public void run() {
+                    sr_main_refresh.setRefreshing(true);
+                    onRefresh();
+                }
+            });
 
         int pageNo = datas.size() / pageSize + 1;
         List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, pageNo, pageSize);
@@ -155,7 +161,21 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         });
 
         //设置按钮点击事件
-        tv_main_menu_setting.setOnClickListener(this);
+        ll_main_menu_setting.setOnClickListener(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        //判断菜单是否显示
+        if (dl_main_drawermenu.isDrawerOpen(Gravity.LEFT)) {
+            dl_main_drawermenu.closeDrawers();
+        } else {
+            //跳转到桌面
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
+            ToastUtil.showShortToast(mContext, getResources().getString(R.string.app_name) + "后台运行");
+        }
     }
 
     //===Desc:本类使用的方法===============================================================================================
@@ -234,10 +254,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         //noinspection deprecation
         int width = wm.getDefaultDisplay().getWidth();
-        sv_main_leftmenu.getLayoutParams().width = width * 70 / 100;
+        sv_main_leftmenu.getLayoutParams().width = width * 40 / 100;
         sv_main_leftmenu.requestLayout();
-        //设置用户名
-        tv_main_menu_username.setText("沙飞");
+        //设置用户名 从sp缓存中获取用户名  如果没有就像是沙飞
+        tv_main_menu_username.setText(CacheUtil.getString(mContext, Keys.USER_NAME, "沙飞"));
     }
 
     //===Desc:刷新的监听===============================================================================================
@@ -253,10 +273,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.tv_main_menu_setting://设置按钮点击事件处理
-                dl_main_drawermenu.closeDrawers();
+            case R.id.ll_main_menu_setting://设置按钮点击事件处理
                 Intent settingIntent = new Intent(mContext, SettingActivity.class);
                 startActivity(settingIntent);
+                dl_main_drawermenu.closeDrawers();
                 break;
         }
     }

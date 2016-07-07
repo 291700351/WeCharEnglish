@@ -18,5 +18,6 @@ public interface Urls {
     /**
      * 下载远端数据库进行同步的url接口
      */
-    String DOWNLOAD_REMOTE_DATA_URL = "http://192.168.1.64:8080/english.db";
+    String DOWNLOAD_REMOTE_DATA_URL = "http://192.168.1.109:8080/english.db";
+//    String DOWNLOAD_REMOTE_DATA_URL = "http://192.168.1.64:8080/english.db";
 }

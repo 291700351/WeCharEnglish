@@ -37,4 +37,4 @@ captures/
 .idea
 
 # Keystore files
-*.jks
+sign
