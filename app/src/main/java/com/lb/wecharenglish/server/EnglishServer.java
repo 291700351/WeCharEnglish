@@ -31,11 +31,15 @@
 package com.lb.wecharenglish.server;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
 
 import com.lb.wecharenglish.dao.EnglishDao;
 import com.lb.wecharenglish.dao.impl.EnglishImpl;
+import com.lb.wecharenglish.db.EnglishDatabaseHelper;
 import com.lb.wecharenglish.domain.EnglishBean;
 import com.lb.wecharenglish.domain.EnglishImgBean;
 import com.lb.wecharenglish.net.Urls;
@@ -128,8 +132,6 @@ public class EnglishServer {
      * @return 对应的数据集合
      */
     public List<EnglishBean> getDataByPage(Context context, int pageNo, int pageSize) {
-
-
         //计算pageNo的最大数，获取数据库中的总条数
         int totalCount = dao.getTotalCount(context);
         int totalPage;
@@ -190,5 +192,42 @@ public class EnglishServer {
         }
 
         return list;
+    }
+
+    /**
+     * 从给定数据库中复制数据到本地数据库中
+     *
+     * @param db 指定数据库元
+     * @return 本地数据库变动的条数
+     */
+    public int copyDataFromDatabas(Context context, @NonNull SQLiteDatabase db) {
+        //读取指定数据库的数据
+        Cursor cursor = db.query(EnglishDatabaseHelper.TABLE_NAME, null, null, null, null, null, null);
+        if (null == cursor) return 0;
+        //使用计数器
+        int count = 0;
+        EnglishBean bean;
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_ID));
+            String title = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_TITLE));
+            String desc = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_DESC));
+            long date = cursor.getLong(cursor.getColumnIndex(EnglishDatabaseHelper.T_DATE));
+            long loadDate = cursor.getLong(cursor.getColumnIndex(EnglishDatabaseHelper.T_LOAD_DATE));
+            int dbIsShow = cursor.getInt(cursor.getColumnIndex(EnglishDatabaseHelper.T_IS_SHOW));
+
+            bean = new EnglishBean();
+            bean.setId(id);
+            bean.setTitle(title);
+            bean.setDesc(desc);
+            bean.setDate(date);
+            bean.setLoadDate(loadDate);
+            bean.setShow(dbIsShow != 0);
+
+            //先本地数据进行添加操作
+            if (add(context, bean))
+                count++;
+        }
+        cursor.close();
+        return count;
     }
 }

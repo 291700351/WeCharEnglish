@@ -30,6 +30,7 @@
 //                  不见满街漂亮妹，哪个归得程序员？
 package com.lb.wecharenglish.ui.activity;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
@@ -48,6 +49,8 @@ import com.lb.utils.ToastUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.R;
 import com.lb.wecharenglish.global.Keys;
+import com.lb.wecharenglish.net.Urls;
+import com.lb.wecharenglish.server.EnglishServer;
 import com.lb.wecharenglish.utils.PermissionUtil;
 import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.NoHttp;
@@ -56,7 +59,6 @@ import com.yolanda.nohttp.download.DownloadRequest;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -173,18 +175,16 @@ public class SettingActivity extends BaseActivity {
                             public void run() {
                                 ToastUtil.showShortToast(mContext, "即将开始下载");
 
-                                String url = "http://192.168.1.104:8080/tomcat.gif";
                                 String path = SdCardUtil.getSDCardPath() + File.separator + getPackageName() + File.separator
                                         + "remote" + File.separator + "db";
                                 String fileName = "english";
 
-                                synchronous(url, path, fileName);
+                                synchronous(Urls.DOWNLOAD_REMOTE_DATA_URL, path, fileName);
                             }
                         });
                 break;
 
             case R.id.ll_setting_backup://备份本地数据库的操作
-
                 String floder = getCacheDir().getParent();
                 File file = new File(floder, "databases");
                 file = new File(file, "english.db");
@@ -207,8 +207,6 @@ public class SettingActivity extends BaseActivity {
                         LogUtil.log(this, "复制完毕");
 
 
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -222,12 +220,11 @@ public class SettingActivity extends BaseActivity {
     protected void requestPermissionsSuccess() {
         ToastUtil.showShortToast(mContext, "即将开始下载");
 
-        String url = "http://192.168.1.104:8080/tomcat.gif";
         String path = SdCardUtil.getSDCardPath() + File.separator + getPackageName() + File.separator
                 + "remote" + File.separator + "db";
         String fileName = "english";
 
-        synchronous(url, path, fileName);
+        synchronous(Urls.DOWNLOAD_REMOTE_DATA_URL, path, fileName);
     }
 
     @Override
@@ -241,58 +238,68 @@ public class SettingActivity extends BaseActivity {
      * 同步远程数据库的方法
      */
     private void synchronous(String url, String filePath, String fileName) {
-        LogUtil.log(this, filePath);
-        try {
-            File file = new File(filePath);
-            if (!file.exists() && file.mkdirs()) {
-                file = new File(file, fileName);
-                if (!file.exists() && file.createNewFile()) {
-                    if (downloadRequest != null && downloadRequest.isStarted() && !downloadRequest.isFinished()) {
-                        //说明正在下载，不用管
-                        return;
-                    }
-                    downloadRequest = NoHttp.createDownloadRequest(url, filePath, fileName, true, false);
-                    // what 区分下载
-                    // downloadRequest 下载请求对象
-                    // downloadListener 下载监听
-                    NoHttp.newDownloadQueue(2).add(0, downloadRequest, new DownloadListener() {
-                        @Override
-                        public void onDownloadError(int what, Exception exception) {
-                            LogUtil.log(this, exception);
-                            pb_setting_synchronousing.setVisibility(View.GONE);
-                            ToastUtil.showShortToast(mContext, "同步远程数据库失败，请重试");
-                        }
-
-                        @Override
-                        public void onStart(int what, boolean isResume, long rangeSize, Headers responseHeaders, long allCount) {
-                            LogUtil.log(this, "开始下载");
-                            pb_setting_synchronousing.setVisibility(View.VISIBLE);//显示进度条
-                        }
-
-                        @Override
-                        public void onProgress(int what, int progress, long fileCount) {
-                            // 更新下载进度
-                        }
-
-                        @Override
-                        public void onFinish(int what, String filePath) {
-                            LogUtil.log(this, "下载完毕");
-                            pb_setting_synchronousing.setVisibility(View.GONE);
-                            //
-                        }
-
-                        @Override
-                        public void onCancel(int what) {
-                            LogUtil.log(this, "下载取消");
-                            pb_setting_synchronousing.setVisibility(View.GONE);
-                        }
-                    });
-                }
-            }
-        } catch (IOException e) {
-            LogUtil.log(this, e);
-            ToastUtil.showShortToast(mContext, "创建文件失败，请重试");
+        if (downloadRequest != null && downloadRequest.isStarted() && !downloadRequest.isFinished()) {
+            //说明正在下载，不用管
+            return;
         }
+        File file = new File(filePath);
+        if (!file.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            file.mkdirs();
+        }
+        file = new File(file, fileName);
+        if (!file.exists()) {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                file.createNewFile();
+            } catch (IOException e) {
+                LogUtil.e(this, e);
+            }
+        }
+        downloadRequest = NoHttp.createDownloadRequest(url, filePath, fileName, true, false);
+        // what 区分下载
+        // downloadRequest 下载请求对象
+        // downloadListener 下载监听
+        NoHttp.newDownloadQueue(2).add(0, downloadRequest, new DownloadListener() {
+            @Override
+            public void onDownloadError(int what, Exception exception) {
+                LogUtil.log(this, exception);
+                pb_setting_synchronousing.setVisibility(View.GONE);
+                ToastUtil.showShortToast(mContext, "同步远程数据库失败，请重试");
+            }
+
+            @Override
+            public void onStart(int what, boolean isResume, long rangeSize, Headers responseHeaders, long allCount) {
+                LogUtil.log(this, "开始下载");
+                pb_setting_synchronousing.setVisibility(View.VISIBLE);//显示进度条
+            }
+
+            @Override
+            public void onProgress(int what, int progress, long fileCount) {
+                // 更新下载进度
+            }
+
+            @Override
+            public void onFinish(int what, String filePath) {
+                //下载完成，打开数据库
+                SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(filePath, null);
+                int count = new EnglishServer().copyDataFromDatabas(mContext, db);
+                db.close();
+                //删除已经下载的数据
+                File file = new File(filePath);
+                //noinspection ResultOfMethodCallIgnored
+                file.delete();
+                ToastUtil.showShortToast(mContext, "更新了" + count + "条数据");
+                pb_setting_synchronousing.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancel(int what) {
+                LogUtil.log(this, "下载取消");
+                pb_setting_synchronousing.setVisibility(View.GONE);
+            }
+        });
+
 
     }
 

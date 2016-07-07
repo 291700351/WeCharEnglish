@@ -1,6 +1,8 @@
 package com.lb.wecharenglish.dao;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.lb.wecharenglish.domain.EnglishBean;
 
@@ -49,4 +51,13 @@ public interface EnglishDao {
      * @return 数据库中数据条数
      */
     int getTotalCount(Context context);
+
+//    /**
+//     * 从给定数据库中复制数据到本地数据库中
+//     *
+//     * @param db 指定数据库元
+//     * @return 本地数据库变动的条数
+//     */
+//    int copyDataFromDatabas(SQLiteDatabase db);
+
 }

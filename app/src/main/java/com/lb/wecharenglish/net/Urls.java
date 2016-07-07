@@ -14,4 +14,9 @@ public interface Urls {
      */
     String ENGLISH_URL = "http://192.168.1.104:8080/data.xml";
 //    String ENGLISH_URL = "http://rss.iwgc.cn/rss/6307-50f3f36fcf4ddfdbb4be047f5ced0daf4425";
+
+    /**
+     * 下载远端数据库进行同步的url接口
+     */
+    String DOWNLOAD_REMOTE_DATA_URL = "http://192.168.1.64:8080/english.db";
 }

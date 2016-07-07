@@ -77,6 +77,9 @@ public class EnglishImpl implements EnglishDao {
         return insert > 0;
     }
 
+
+
+
     //===Desc:查询相关的方法===============================================================================================
 
     /**
@@ -139,7 +142,7 @@ public class EnglishImpl implements EnglishDao {
         SQLiteDatabase db = helper.getReadableDatabase();
 
         Cursor cursor = db.query(EnglishDatabaseHelper.TABLE_NAME, null, EnglishDatabaseHelper.T_IS_SHOW + "=?",
-                new String[]{String.valueOf(1)}, null, null, EnglishDatabaseHelper.T_DATE + " ASC", begin + "," + pageSize);
+                new String[]{String.valueOf(1)}, null, null, EnglishDatabaseHelper.T_DATE + " desc", begin + "," + pageSize);
         if (null == cursor) {
             db.close();
             return list;

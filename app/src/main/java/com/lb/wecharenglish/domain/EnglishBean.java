@@ -132,7 +132,7 @@ public class EnglishBean implements Serializable, Comparable<EnglishBean> {
         return "EnglishBean{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
-                ", desc='" + desc + '\'' +
+//                ", desc='" + desc + '\'' +
                 ", date='" + date + '\'' +
                 ", loadDate='" + loadDate + '\'' +
                 ", isShow=" + isShow +

@@ -34,14 +34,11 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.lb.utils.LogUtil;
-import com.lb.wecharenglish.R;
 import com.lb.wecharenglish.utils.PermissionUtil;
 
 /**

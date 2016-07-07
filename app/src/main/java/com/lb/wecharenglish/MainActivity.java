@@ -2,6 +2,7 @@ package com.lb.wecharenglish;
 
 import android.content.Intent;
 import android.os.Handler;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.WindowManager;
@@ -11,7 +12,6 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.lb.utils.LogUtil;
 import com.lb.utils.ToastUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -43,6 +43,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     //===Desc:侧滑菜单控件===============================================================================================
 
+    private DrawerLayout dl_main_drawermenu;
     /**
      * 侧滑菜单控件
      */
@@ -78,6 +79,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         sr_main_refresh = ViewUtil.findViewById(this, R.id.sr_main_refresh);
         lv_main_datas = ViewUtil.findViewById(this, R.id.lv_main_datas);
         //侧滑菜单
+        dl_main_drawermenu = ViewUtil.findViewById(this, R.id.dl_main_drawermenu);
         sv_main_leftmenu = ViewUtil.findViewById(this, R.id.sv_main_leftmenu);
         tv_main_menu_username = ViewUtil.findViewById(this, R.id.tv_main_menu_username);
         tv_main_menu_setting = ViewUtil.findViewById(this, R.id.tv_main_menu_setting);
@@ -108,7 +110,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         //初始化侧滑菜单宽度
         initMenuData();
-
     }
 
     @Override
@@ -253,6 +254,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_main_menu_setting://设置按钮点击事件处理
+                dl_main_drawermenu.closeDrawers();
                 Intent settingIntent = new Intent(mContext, SettingActivity.class);
                 startActivity(settingIntent);
                 break;
