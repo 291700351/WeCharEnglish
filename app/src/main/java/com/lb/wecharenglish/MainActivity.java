@@ -15,7 +15,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lb.utils.CacheUtil;
-import com.lb.utils.LogUtil;
 import com.lb.utils.ToastUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -33,6 +32,11 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
     //===Desc:成员变量===============================================================================================
+
+    /**
+     * 显示的是否是收藏的数据
+     */
+    private boolean isShowLike;
 
     private int pageSize = 10;
     /**
@@ -62,6 +66,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
      * 侧滑菜单设置按钮
      */
     private LinearLayout ll_main_menu_setting;
+    /**
+     * 侧滑菜单显示我的收藏按钮
+     */
+    private LinearLayout ll_main_menu_showLike;
 
     //===Desc:复写父类的方法===============================================================================================
     @Override
@@ -87,6 +95,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         sv_main_leftmenu = ViewUtil.findViewById(this, R.id.sv_main_leftmenu);
         tv_main_menu_username = ViewUtil.findViewById(this, R.id.tv_main_menu_username);
         ll_main_menu_setting = ViewUtil.findViewById(this, R.id.ll_main_menu_setting);
+        ll_main_menu_showLike = ViewUtil.findViewById(this, R.id.ll_main_menu_showLike);
     }
 
     @Override
@@ -103,7 +112,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             });
 
         int pageNo = datas.size() / pageSize + 1;
-        List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, pageNo, pageSize);
+        List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, 0, pageNo, pageSize);
 
         //数据去重
         for (EnglishBean bean : dbList) {
@@ -162,6 +171,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         //设置按钮点击事件
         ll_main_menu_setting.setOnClickListener(this);
+        ll_main_menu_showLike.setOnClickListener(this);
     }
 
     @Override
@@ -181,6 +191,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     //===Desc:本类使用的方法===============================================================================================
 
     private void loadData() {
+        if (isShowLike) {
+            sr_main_refresh.setRefreshing(false);
+            return;
+        }
         new Thread() {
             @Override
             public void run() {
@@ -217,7 +231,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         int pageNo = datas.size() / pageSize + 1;
 
         final int oldSize = datas.size();
-        List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, pageNo, pageSize);
+        List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, isShowLike ? 1 : 0, pageNo, pageSize);
 
         //数据去重
         for (EnglishBean bean : dbList) {
@@ -277,6 +291,20 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 Intent settingIntent = new Intent(mContext, SettingActivity.class);
                 startActivity(settingIntent);
                 dl_main_drawermenu.closeDrawers();
+                break;
+            case R.id.ll_main_menu_showLike://显示我的收藏
+                //更新数据源，将页面listView
+                //调用业务层
+                List<EnglishBean> list =
+                        new EnglishServer().getDataByPage(mContext, 1, 1, pageSize);
+                //清空listView数据源，设置为当前常寻道的数据
+                datas.clear();
+                datas.addAll(list);
+                adapter.notifyDataSetChanged();
+                //关闭菜单
+                dl_main_drawermenu.closeDrawers();
+                isShowLike = true;
+
                 break;
         }
     }

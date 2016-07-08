@@ -76,9 +76,9 @@ public class EnglishDatabaseHelper extends SQLiteOpenHelper {
     public static String T_DATE = "_date";
 
     /**
-     * 数据库字段_loadDate  加载时间
+     * 是否加入收藏列表
      */
-    public static String T_LOAD_DATE = "_loadDate";
+    public static String T_IS_LIKE = "_isLike";
 
     /**
      * 数据库字段isShow，是否显示
@@ -120,7 +120,7 @@ public class EnglishDatabaseHelper extends SQLiteOpenHelper {
                 + T_TITLE + "  VARCHAR,"
                 + T_DESC + "  VARCHAR,"
                 + T_DATE + "  VARCHAR,"
-                + T_LOAD_DATE + "  VARCHAR,"
+                + T_IS_LIKE + "  INT,"
                 + T_IS_SHOW + "  int)";
         sqLiteDatabase.execSQL(sql);
         //对应的图片表

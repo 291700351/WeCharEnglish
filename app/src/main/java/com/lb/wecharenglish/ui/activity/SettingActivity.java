@@ -31,13 +31,9 @@
 package com.lb.wecharenglish.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
@@ -131,7 +127,7 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected View createView() {
         String deviceInfo = CommonUtil.getDeviceInfo(mContext);
-        LogUtil.log(this,deviceInfo);
+        LogUtil.log(this, deviceInfo);
 
         return View.inflate(mContext, R.layout.activity_setting, null);
     }
@@ -335,61 +331,4 @@ public class SettingActivity extends BaseActivity {
             }
         });
     }
-
-    private void test(Context context) {
-        StringBuilder deviceId = new StringBuilder();
-// 渠道标志
-        deviceId.append("a");
-
-        try {
-
-//wifi mac地址
-            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            WifiInfo info = wifi.getConnectionInfo();
-            String wifiMac = info.getMacAddress();
-            if (!TextUtils.isEmpty(wifiMac)) {
-                deviceId.append("wifi");
-                deviceId.append(wifiMac);
-                LogUtil.log("getDeviceId : ", deviceId.toString());
-//                return deviceId.toString();
-            }
-
-//IMEI（imei）
-            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            String imei = tm.getDeviceId();
-            if (!TextUtils.isEmpty(imei)) {
-                deviceId.append("imei");
-                deviceId.append(imei);
-                LogUtil.log("getDeviceId : ", deviceId.toString());
-//                return deviceId.toString();
-            }
-
-//序列号（sn）
-            String sn = tm.getSimSerialNumber();
-            if (!TextUtils.isEmpty(sn)) {
-                deviceId.append("sn");
-                deviceId.append(sn);
-                LogUtil.log("getDeviceId : ", deviceId.toString());
-//                return deviceId.toString();
-            }
-
-//如果上面都没有， 则生成一个id：随机码
-//            String uuid = getUUID(context);
-//            if(!isEmpty(uuid)){
-//                deviceId.append("id");
-//                deviceId.append(uuid);
-////                PALog.e("getDeviceId : ", deviceId.toString());
-////                return deviceId.toString();
-//            }
-        } catch (Exception e) {
-            e.printStackTrace();
-//            deviceId.append("id").append(getUUID(context));
-        }
-
-//        PALog.e("getDeviceId : ", deviceId.toString());
-
-//        return deviceId.toString();
-    }
-
-
 }

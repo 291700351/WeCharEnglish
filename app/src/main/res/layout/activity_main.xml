@@ -75,7 +75,25 @@
                         android:text="@string/txt_setting"
                         android:textColor="@color/color_txt_white"
                         android:textSize="@dimen/size_txt_center" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_main_menu_showLike"
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:layout_height="wrap_content">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/setting_press"
+                        android:drawablePadding="8dp"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:text="@string/txt_show_like"
+                        android:textColor="@color/color_txt_white"
+                        android:textSize="@dimen/size_txt_center" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

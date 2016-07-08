@@ -49,8 +49,10 @@ public class EnglishBean implements Serializable, Comparable<EnglishBean> {
     private String title;//标题
     private String desc;//详情
     private long date;//时间
-    private long loadDate;//加载的时间
+    //    private long loadDate;//加载的时间
     private boolean isShow;//是否在界面上显示
+
+    private boolean isLike;//是否添加收藏
 
     public String getId() {
         return EncryptUtil.md5(getTitle() + getDate());
@@ -88,13 +90,6 @@ public class EnglishBean implements Serializable, Comparable<EnglishBean> {
         this.date = date;
     }
 
-    public long getLoadDate() {
-        return loadDate;
-    }
-
-    public void setLoadDate(long loadDate) {
-        this.loadDate = loadDate;
-    }
 
     public boolean isShow() {
         return isShow;
@@ -104,6 +99,13 @@ public class EnglishBean implements Serializable, Comparable<EnglishBean> {
         isShow = show;
     }
 
+    public boolean isLike() {
+        return isLike;
+    }
+
+    public void setLike(boolean like) {
+        isLike = like;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -111,9 +113,7 @@ public class EnglishBean implements Serializable, Comparable<EnglishBean> {
         if (o == null || getClass() != o.getClass()) return false;
 
         EnglishBean that = (EnglishBean) o;
-
         return getId().equals(that.getId());
-
     }
 
     @Override
@@ -122,8 +122,8 @@ public class EnglishBean implements Serializable, Comparable<EnglishBean> {
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (desc != null ? desc.hashCode() : 0);
         result = 31 * result + (int) (date ^ (date >>> 32));
-        result = 31 * result + (int) (loadDate ^ (loadDate >>> 32));
         result = 31 * result + (isShow ? 1 : 0);
+        result = 31 * result + (isLike ? 1 : 0);
         return result;
     }
 
@@ -132,10 +132,10 @@ public class EnglishBean implements Serializable, Comparable<EnglishBean> {
         return "EnglishBean{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
-//                ", desc='" + desc + '\'' +
-                ", date='" + date + '\'' +
-                ", loadDate='" + loadDate + '\'' +
+                ", desc='" + desc + '\'' +
+                ", date=" + date +
                 ", isShow=" + isShow +
+                ", isLike=" + isLike +
                 '}';
     }
 
@@ -146,10 +146,8 @@ public class EnglishBean implements Serializable, Comparable<EnglishBean> {
         // 返回值<0（如例子中返回-1）代表this排在被比较对象之前；
         // 反之代表在被比较对象之后
         if (getDate() == englishBean.getDate()) {
-            if (getLoadDate() == englishBean.getLoadDate()) {
-                return getTitle().compareTo(englishBean.getTitle());
-            }
-            return (int) (englishBean.getLoadDate() - getLoadDate());
+            //相等就比价title
+            return getTitle().compareTo(englishBean.getTitle());
         }
         return (int) (englishBean.getDate() - getDate());
     }

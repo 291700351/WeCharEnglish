@@ -39,11 +39,12 @@ public interface EnglishDao {
      * 根据pageNo和pageSize枫叶查询贝蒂数据
      *
      * @param context  赏析文对象
+     * @param isLike   是否是收藏 0：全部，1：收藏的，2：不是收藏的
      * @param begin    开始查询的位置
      * @param pageSize 一页显示的条数
      * @return 对应的数据集合
      */
-    List<EnglishBean> getDataByPage(Context context, int begin, int pageSize);
+    List<EnglishBean> getDataByPage(Context context, int isLike, int begin, int pageSize);
 
     /**
      * DAO中统计个数的方法
@@ -51,6 +52,15 @@ public interface EnglishDao {
      * @return 数据库中数据条数
      */
     int getTotalCount(Context context);
+
+    /**
+     * 更新一条数据库中的数据
+     *
+     * @param context 上下文
+     * @param newBean 每日一句的bean
+     * @return 修改成功影响的条数
+     */
+    int update(Context context, EnglishBean newBean);
 
 //    /**
 //     * 从给定数据库中复制数据到本地数据库中

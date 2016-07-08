@@ -34,6 +34,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.TextUtils;
 
@@ -84,8 +85,8 @@ public class EnglishServer {
         if (null == bean) return false;
         //设置对象的id，根据title和date进行MD5
         bean.setId();
-        //设置加载时间
-        bean.setLoadDate(System.currentTimeMillis());
+        //设置不是收藏
+        bean.setLike(false);
         //设置显示
         bean.setShow(true);
         //先判断数据库中是否已经包含该对象，已经包含就不用添加
@@ -127,11 +128,12 @@ public class EnglishServer {
      * 根据pageNo和pageSize枫叶查询贝蒂数据
      *
      * @param context  赏析文对象
+     * @param isLike   是否是收藏 0：全部，1：收藏的，2：不是收藏的
      * @param pageNo   页号
      * @param pageSize 一页显示的条数
      * @return 对应的数据集合
      */
-    public List<EnglishBean> getDataByPage(Context context, int pageNo, int pageSize) {
+    public List<EnglishBean> getDataByPage(Context context, int isLike, int pageNo, int pageSize) {
         //计算pageNo的最大数，获取数据库中的总条数
         int totalCount = dao.getTotalCount(context);
         int totalPage;
@@ -147,7 +149,7 @@ public class EnglishServer {
             pageNo = 1;
         }
         int begin = (pageNo - 1) * pageSize;
-        return dao.getDataByPage(context, begin, pageSize);
+        return dao.getDataByPage(context, isLike, begin, pageSize);
     }
 
     /**
@@ -212,7 +214,7 @@ public class EnglishServer {
             String title = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_TITLE));
             String desc = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_DESC));
             long date = cursor.getLong(cursor.getColumnIndex(EnglishDatabaseHelper.T_DATE));
-            long loadDate = cursor.getLong(cursor.getColumnIndex(EnglishDatabaseHelper.T_LOAD_DATE));
+            int dbIsLike = cursor.getInt(cursor.getColumnIndex(EnglishDatabaseHelper.T_IS_LIKE));
             int dbIsShow = cursor.getInt(cursor.getColumnIndex(EnglishDatabaseHelper.T_IS_SHOW));
 
             bean = new EnglishBean();
@@ -220,7 +222,7 @@ public class EnglishServer {
             bean.setTitle(title);
             bean.setDesc(desc);
             bean.setDate(date);
-            bean.setLoadDate(loadDate);
+            bean.setLike(dbIsLike == 0);
             bean.setShow(dbIsShow != 0);
 
             //先本地数据进行添加操作
@@ -230,4 +232,23 @@ public class EnglishServer {
         cursor.close();
         return count;
     }
+
+    /**
+     * 更新一条数据库中的数据
+     *
+     * @param context   上下文
+     * @param englishId 每日一句的id
+     * @param isLike    设置成收藏或移除收藏
+     * @return 修改成功返回true
+     */
+    public boolean setLike(Context context, String englishId, boolean isLike) {
+        //获取数据库中对应id的bean对象
+        EnglishBean dbBean = findById(context, englishId);
+        if (null == dbBean)
+            return false;
+        dbBean.setLike(isLike);
+        int count = dao.update(context, dbBean);
+        return count > 1;
+    }
+
 }
