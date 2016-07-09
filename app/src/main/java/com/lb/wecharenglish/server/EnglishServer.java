@@ -34,15 +34,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.TextUtils;
 
+import com.lb.utils.LogUtil;
 import com.lb.wecharenglish.dao.EnglishDao;
 import com.lb.wecharenglish.dao.impl.EnglishImpl;
 import com.lb.wecharenglish.db.EnglishDatabaseHelper;
 import com.lb.wecharenglish.domain.EnglishBean;
 import com.lb.wecharenglish.domain.EnglishImgBean;
+import com.lb.wecharenglish.net.Httphelper;
 import com.lb.wecharenglish.net.Urls;
 
 import org.jsoup.Jsoup;
@@ -158,7 +159,7 @@ public class EnglishServer {
     public List<EnglishBean> getDataFromRemote() {
         List<EnglishBean> list = new ArrayList<>();
         try {
-            Document document = Jsoup.connect(Urls.ENGLISH_URL).get();
+            Document document = Jsoup.connect(Urls.ENGLISH_URL).timeout(60 * 1000).get();
             if (null == document) return list;
             Elements items = document.getElementsByTag("item");
             if (null == items || items.size() == 0) return list;
@@ -173,8 +174,7 @@ public class EnglishServer {
                 if (null == descs || descs.size() == 0) return list;
                 //将详情里面的转义字符转换成标签
                 //noinspection deprecation
-                String desc = Html.fromHtml(descs.get(0).html()).toString();
-
+                String desc = descs.get(0).html();
                 Elements dates = item.getElementsByTag("pubDate");
                 if (null == dates || dates.size() == 0) return list;
                 String date = dates.get(0).html();
@@ -190,7 +190,7 @@ public class EnglishServer {
             }
             return list;
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.log(this, e);
         }
 
         return list;
@@ -214,7 +214,7 @@ public class EnglishServer {
             String title = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_TITLE));
             String desc = cursor.getString(cursor.getColumnIndex(EnglishDatabaseHelper.T_DESC));
             long date = cursor.getLong(cursor.getColumnIndex(EnglishDatabaseHelper.T_DATE));
-            int dbIsLike = cursor.getInt(cursor.getColumnIndex(EnglishDatabaseHelper.T_IS_LIKE));
+//            int dbIsLike = cursor.getInt(cursor.getColumnIndex(EnglishDatabaseHelper.T_IS_LIKE));
             int dbIsShow = cursor.getInt(cursor.getColumnIndex(EnglishDatabaseHelper.T_IS_SHOW));
 
             bean = new EnglishBean();
@@ -222,7 +222,7 @@ public class EnglishServer {
             bean.setTitle(title);
             bean.setDesc(desc);
             bean.setDate(date);
-            bean.setLike(dbIsLike == 0);
+            bean.setLike(false);
             bean.setShow(dbIsShow != 0);
 
             //先本地数据进行添加操作

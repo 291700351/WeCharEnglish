@@ -15,6 +15,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lb.utils.CacheUtil;
+import com.lb.utils.LogUtil;
 import com.lb.utils.ToastUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -78,7 +79,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         startService(service);
 
         datas = new ArrayList<>();
-        adapter = new HomeAdapter(mContext, datas);
+
     }
 
     @Override
@@ -88,7 +89,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Override
     protected void findView() {
-        sr_main_refresh = ViewUtil.findViewById(this, R.id.sr_main_refresh);
+        sr_main_refresh = ViewUtil.findViewById(rootView, R.id.sr_main_refresh);
         lv_main_datas = ViewUtil.findViewById(this, R.id.lv_main_datas);
         //侧滑菜单
         dl_main_drawermenu = ViewUtil.findViewById(this, R.id.dl_main_drawermenu);
@@ -100,7 +101,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Override
     protected void setViewData() {
-        lv_main_datas.setAdapter(adapter);
+        setActionBarDatas(false, getString(R.string.app_name), false, false, null);
         //如果是返回当前界面，不是重新创建就不请求服务器加载数据了
         if (!isResume)
             sr_main_refresh.post(new Runnable() {
@@ -111,20 +112,27 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 }
             });
 
-        int pageNo = datas.size() / pageSize + 1;
-        List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, 0, pageNo, pageSize);
-
-        //数据去重
-        for (EnglishBean bean : dbList) {
-            if (!datas.contains(bean)) {
-                datas.add(bean);
-            }
+        if (null == adapter) {
+            adapter = new HomeAdapter(mContext, datas);
+            lv_main_datas.setAdapter(adapter);
         }
-        Collections.sort(datas);
+        if (reLoadData) {
+            int pageNo = datas.size() / pageSize + 1;
+            List<EnglishBean> dbList = new EnglishServer().getDataByPage(mContext, 0, pageNo, pageSize);
+
+            //数据去重
+            for (EnglishBean bean : dbList) {
+                if (!datas.contains(bean)) {
+                    datas.add(bean);
+                }
+            }
+            Collections.sort(datas);
+        }
         adapter.notifyDataSetChanged();
 
         //初始化侧滑菜单宽度
         initMenuData();
+        reLoadData = false;
     }
 
     @Override
@@ -292,19 +300,26 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 startActivity(settingIntent);
                 dl_main_drawermenu.closeDrawers();
                 break;
-            case R.id.ll_main_menu_showLike://显示我的收藏
+            case R.id.ll_main_menu_showLike://显示我的收藏或者全部
+                TextView tv_main_menu_like = ViewUtil.findViewById(rootView, R.id.tv_main_menu_like);
                 //更新数据源，将页面listView
+                List<EnglishBean> list;
                 //调用业务层
-                List<EnglishBean> list =
-                        new EnglishServer().getDataByPage(mContext, 1, 1, pageSize);
+                if (!isShowLike) {
+                    //需要显示都长的
+                    tv_main_menu_like.setText(getResources().getString(R.string.txt_show_all));
+                    list = new EnglishServer().getDataByPage(mContext, 1, 1, pageSize);
+                } else {
+                    tv_main_menu_like.setText(getResources().getString(R.string.txt_show_like));
+                    list = new EnglishServer().getDataByPage(mContext, 0, 1, pageSize);
+                }
                 //清空listView数据源，设置为当前常寻道的数据
                 datas.clear();
                 datas.addAll(list);
                 adapter.notifyDataSetChanged();
+                isShowLike = !isShowLike;
                 //关闭菜单
                 dl_main_drawermenu.closeDrawers();
-                isShowLike = true;
-
                 break;
         }
     }

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:card_view="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:paddingBottom="4dp"
-              android:paddingLeft="16dp"
-              android:paddingRight="16dp"
-              android:paddingTop="4dp">
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="4dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="4dp">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -41,7 +40,7 @@
                     android:maxLines="1"
                     android:textColor="@color/color_txt_black"
                     android:textSize="@dimen/size_txt_big"
-                    tools:text="Title"/>
+                    tools:text="Title" />
 
                 <TextView
                     android:id="@+id/tv_item_date"
@@ -50,7 +49,7 @@
                     android:layout_marginLeft="5dp"
                     android:textColor="@color/color_txt_gray"
                     android:textSize="@dimen/size_txt_small"
-                    tools:text="2011-11-11"/>
+                    tools:text="2011-11-11" />
             </LinearLayout>
 
             <LinearLayout
@@ -66,7 +65,7 @@
                     android:layout_height="match_parent"
                     android:contentDescription="@null"
                     android:scaleType="fitXY"
-                    tools:background="@mipmap/ic_launcher"/>
+                    tools:background="@mipmap/ic_launcher" />
 
                 <TextView
                     android:id="@+id/tv_item_desc"
@@ -78,33 +77,8 @@
                     android:maxLines="6"
                     android:textColor="#3a3a3a"
                     android:textSize="@dimen/size_txt_small"
-                    tools:text="This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!"/>
+                    tools:text="This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!" />
             </LinearLayout>
-
-            <com.sackcentury.shinebuttonlib.ShineButton
-                android:id="@+id/sb_item_like"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_gravity="right"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
-                android:src="@android:color/darker_gray"
-                app:allow_random_color="false"
-                app:big_shine_color="#FF6666"
-                app:btn_color="@android:color/darker_gray"
-                app:btn_fill_color="#FF6666"
-                app:click_animation_duration="200"
-                app:enable_flashing="false"
-                app:shine_animation_duration="1500"
-                app:shine_count="8"
-                app:shine_distance_multiple="1.5"
-                app:shine_turn_angle="10"
-                app:siShape="@raw/star"
-                app:small_shine_color="#CC9999"
-                app:small_shine_offset_angle="20"/>
         </LinearLayout>
-
     </android.support.v7.widget.CardView>
-
-
 </LinearLayout>

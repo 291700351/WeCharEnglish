@@ -31,6 +31,7 @@
 package com.lb.wecharenglish.ui.activity;
 
 import android.text.Html;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.R;
 import com.lb.wecharenglish.domain.EnglishBean;
 import com.lb.wecharenglish.global.Keys;
+import com.lb.wecharenglish.server.EnglishServer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -83,8 +85,8 @@ public class EnglishDetailActivity extends BaseActivity {
         englishBean = (EnglishBean) getIntent().getSerializableExtra(Keys.KEY_ENGLISH_BEAN);
         if (null == englishBean)//如果三个界面没有传递过来对象 就关闭当前页面
             finish();
-
     }
+
 
     @Override
     protected View createView() {
@@ -101,6 +103,8 @@ public class EnglishDetailActivity extends BaseActivity {
 
     @Override
     protected void setViewData() {
+        setActionBarDatas(true, englishBean.getTitle(), true, englishBean.isLike(), this);
+
         tv_detail_title.setText(englishBean.getTitle());
         String time = new SimpleDateFormat(
                 "yyyy-MM-dd HH:mm:ss", Locale.CHINESE).format(new Date(englishBean.getDate()));
@@ -108,7 +112,6 @@ public class EnglishDetailActivity extends BaseActivity {
         String desc = englishBean.getDesc();
 
         desc = desc.replaceAll("<img[^>]*>", " ");
-        LogUtil.e(this, desc);
 
 
         //noinspection deprecation
@@ -122,7 +125,12 @@ public class EnglishDetailActivity extends BaseActivity {
 
     @Override
     public void onClick(View view) {
-
+        switch (view.getId()) {
+            case R.id.sb_base_actionbar_like://收藏按钮点击事件处理
+                new EnglishServer().setLike(mContext, englishBean.getId(), !englishBean.isLike());
+                englishBean.setLike(!englishBean.isLike());
+                break;
+        }
     }
 
     //===Desc:本类中使用的方法===============================================================================

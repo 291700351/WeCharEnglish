@@ -4,6 +4,7 @@
 
     <string name="txt_setting">设置</string>
     <string name="txt_show_like">我的收藏</string>
+    <string name="txt_show_all">显示全部</string>
 
     <string name="txt_username">个性签名</string>
     <string name="txt_synchronous">同步远程数据库</string>

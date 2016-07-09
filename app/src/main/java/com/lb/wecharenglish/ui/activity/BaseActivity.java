@@ -30,16 +30,21 @@
 //                  不见满街漂亮妹，哪个归得程序员？
 package com.lb.wecharenglish.ui.activity;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.lb.utils.LogUtil;
-import com.lb.wecharenglish.utils.PermissionUtil;
+import com.lb.utils.ViewUtil;
+import com.lb.wecharenglish.R;
+import com.sackcentury.shinebuttonlib.ShineButton;
 
 /**
  * 项目名称：ysp-android<br>
@@ -59,6 +64,16 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected boolean isResume;
 
     /**
+     * 是否重新加载数据
+     */
+    protected boolean reLoadData;
+
+    /**
+     * actionBar控件
+     */
+    private ActionBar actionBar;
+
+    /**
      * 显示在界面上的view
      */
     protected View rootView;
@@ -67,6 +82,27 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      * 提供给子类使用的上下文对象
      */
     protected Context mContext;
+
+    //===Desc:actionBar相关的控件===============================================================================================
+
+    /**
+     * 是否显示actionbar，默认是显示（true）,可以再initData()方法中设置不显示
+     */
+    protected boolean showActionBar;
+    /**
+     * 显示在actionbar上面的view
+     */
+    private View actionBarView;
+
+    /**
+     * actionbar上面的title控件
+     */
+    private TextView tv_base_actionbar_title;
+
+    /**
+     * actionbar里面添加收藏按钮
+     */
+    private ShineButton sb_base_actionbar_like;
 
 
     //===Desc:复写父类中的方法===============================================================================
@@ -79,12 +115,19 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
 
         isResume = false;
+        reLoadData = true;
 
         mContext = this;
 
+        showActionBar = true;
+
         initData();
 
-        View rootView = createView();
+        //设置actionbar
+        initActionBar();
+
+        //设置布局显示
+        rootView = createView();
         if (null == rootView)
             throw new IllegalStateException("You must return a not null view to show at the createView() method......");
         LogUtil.log(this, getClass().getSimpleName() + " onCreate...");
@@ -93,12 +136,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
         findView();
 
-
     }
 
     @Override
     protected void onResume() {
-
         setViewData();
 
         setListener();
@@ -108,8 +149,59 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         isResume = true;
     }
 
+    //处理actionbar只有按钮的点击事件
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home://返回按钮
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     //===Desc:本类中使用的方法===============================================================================
 
+    /**
+     * 初始化actionbar
+     */
+    private void initActionBar() {
+        //得到actionBar，注意我的是V7包，使用getSupportActionBar()
+        actionBar = getSupportActionBar();
+        if (null == actionBar) return;
+        //判断是否设置了不显示actionbar
+        if (!showActionBar) {
+            actionBar.hide();
+            return;
+        }
+
+        actionBar.setDisplayShowTitleEnabled(false);
+        //在使用v7包的时候显示icon和标题需指定一下属性。
+        actionBar.setDisplayShowHomeEnabled(true);
+//         actionBar.setLogo(R.mipmap.ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
+        // 返回箭头（默认不显示）
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        // 左侧图标点击事件使能
+        actionBar.setHomeButtonEnabled(true);
+        //显示自定义的actionBar
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBarView = getLayoutInflater().inflate(R.layout.actionbar_base, null, false);
+        //初始化控件
+        findActionBarView();
+        //设置显示
+        actionBar.setCustomView(actionBarView);
+    }
+
+    /**
+     * 初始化actionbar中的控件
+     */
+    private void findActionBarView() {
+        //标题
+        tv_base_actionbar_title = ViewUtil.findViewById(actionBarView, R.id.tv_base_actionbar_title);
+        //收藏按钮
+        sb_base_actionbar_like = ViewUtil.findViewById(actionBarView, R.id.sb_base_actionbar_like);
+    }
 
     //===Desc:子类必须实现===============================================================================================
 
@@ -127,6 +219,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      */
     protected void initData() {
     }
+
 
     /**
      * 初始化界面中的控件的方法
@@ -147,7 +240,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     //===Desc:请求权限的回调===============================================================================================
-
 
     /**
      * 但界面需要申请权限时，申请权限成功回调这个方法
@@ -184,5 +276,70 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 //        if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
 //            permissionCode = PermissionUtil.EXTERNAL_STORAGE_REQ_CODE;
         return super.shouldShowRequestPermissionRationale(permission);
+    }
+
+    //===Desc:提供给子类使用的方法===============================================================================================
+
+    /**
+     * 设置actionbar标题
+     *
+     * @param title 需要设置的标题
+     */
+    protected void setActionBarTitle(@NonNull String title) {
+        if (TextUtils.isEmpty(title))
+            return;
+        tv_base_actionbar_title.setText(title);
+    }
+
+    /**
+     * 是否显示收藏按钮
+     *
+     * @param showLikeBtn 是否显示<br>&#9;true：显示<br>&#9false：不显示
+     */
+    protected void showLikeBtn(boolean showLikeBtn) {
+        sb_base_actionbar_like.setVisibility(showLikeBtn ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * 设置收藏按钮是否选中
+     *
+     * @param checked 是否选中<br>&#9;true：选中<br>&#9;false：不选中
+     */
+    protected void setLikeChecked(boolean checked) {
+        sb_base_actionbar_like.setChecked(checked);
+    }
+
+    /**
+     * 设置收藏按钮的点击事件
+     *
+     * @param listener 点击事件
+     */
+    protected void setListClicklistener(View.OnClickListener listener) {
+        if (sb_base_actionbar_like.getVisibility() == View.VISIBLE)
+            sb_base_actionbar_like.setOnClickListener(listener);
+    }
+
+    /**
+     * 初始化actionbar上面控件数据显示
+     *
+     * @param showBackBtn    是否显示返回按钮 <br>&#9;true：显示<br>&#9false：不显示
+     * @param title          需要设置的标题
+     * @param showLikeBtn    是否显示收藏按钮，不显示收藏按钮键不会设置下面两个属性<br>&#9;true：显示<br>&#9false：不显示
+     * @param likeBtnChecked 设置收藏按钮是否选中<br>&#9;true：选中<br>&#9false：不选中
+     * @param listener       设置收藏按钮的点击事件
+     */
+    protected void setActionBarDatas(boolean showBackBtn, String title,
+                                     boolean showLikeBtn,
+                                     boolean likeBtnChecked,
+                                     View.OnClickListener listener) {
+        tv_base_actionbar_title.setFocusable(true);
+        actionBar.setDisplayHomeAsUpEnabled(showBackBtn);
+        setActionBarTitle(title);
+        showLikeBtn(showLikeBtn);
+        //如果收藏按钮不显示就不需要设置属性了
+        if (showLikeBtn) {
+            setLikeChecked(likeBtnChecked);
+            setListClicklistener(listener);
+        }
     }
 }

@@ -36,6 +36,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.Html;
 
+import com.lb.utils.LogUtil;
 import com.lb.wecharenglish.dao.EnglishDao;
 import com.lb.wecharenglish.db.EnglishDatabaseHelper;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -106,7 +107,7 @@ public class EnglishImpl implements EnglishDao {
                 bean.setId();
                 bean.setTitle(title);
                 //noinspection deprecation
-                bean.setDesc(Html.fromHtml(desc).toString());
+                bean.setDesc(desc);
                 bean.setDate(date);
                 bean.setLike(dbIsLike == 1);
                 bean.setShow(dbIsShow != 0);

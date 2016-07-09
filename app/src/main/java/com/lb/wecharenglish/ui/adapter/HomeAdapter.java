@@ -38,6 +38,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lb.utils.LogUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.R;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -110,17 +111,8 @@ public class HomeAdapter extends BaseAdapter {
         Pattern p_html = Pattern.compile("<[^>]+>", Pattern.CASE_INSENSITIVE);
         Matcher m_html = p_html.matcher(desc);
         desc = m_html.replaceAll(""); // 过滤html标签
+        LogUtil.log(this,desc);
         holder.tv_item_desc.setText(desc);
-        holder.sb_item_like.setChecked(bean.isLike());
-
-        holder.sb_item_like.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new EnglishServer().setLike(mContext, bean.getId(), !bean.isLike());
-                bean.setLike(!bean.isLike());
-            }
-        });
-
 
         //查询数据库获取第一张图片
         final List<EnglishImgBean> imgs = new EnglishImgServer().getImgsByEnglishId(mContext, bean.getId());
@@ -140,7 +132,6 @@ public class HomeAdapter extends BaseAdapter {
         TextView tv_item_date;
         TextView tv_item_desc;
         ImageView iv_itme_img;
-        ShineButton sb_item_like;//收藏按钮
 
 
         private ViewHolder(View view) {
@@ -148,7 +139,6 @@ public class HomeAdapter extends BaseAdapter {
             tv_item_date = ViewUtil.findViewById(view, R.id.tv_item_date);
             tv_item_desc = ViewUtil.findViewById(view, R.id.tv_item_desc);
             iv_itme_img = ViewUtil.findViewById(view, R.id.iv_itme_img);
-            sb_item_like = ViewUtil.findViewById(view, R.id.sb_item_like);
         }
 
         public static ViewHolder getHolder(View view) {
