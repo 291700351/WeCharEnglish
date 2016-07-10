@@ -28,29 +28,31 @@
 //                  奔驰宝马贵者趣，公交自行程序员。
 //                  别人笑我忒疯癫，我笑自己命太贱；
 //                  不见满街漂亮妹，哪个归得程序员？
-package com.lb.wecharenglish.global;
+package com.lb.wecharenglish.ui.activity;
+
+import android.view.View;
+import android.widget.TextView;
 
 /**
  * 项目名称：ysp-android<br>
  * 作者：IceLee<br>
  * 邮箱：lb291700351@live.cn<br>
- * 时间：2016/7/5 20:42<br>
- * 类描述：程序中使用的键 <br>
+ * 时间：2016/7/9 17:06<br>
+ * 类描述：程序引导界面 <br>
  */
-public interface Keys {
+public class GuideActivity extends BaseActivity {
+    //===Desc:成员变量===============================================================================
 
-    /**
-     * 是否是第一次运行app的键
-     */
-    String Key_IS_FIRST_RUN_APP = "isFirstRunApp";
+    //===Desc:复写父类中的方法===============================================================================
+    @Override
+    protected View createView() {
+        return new TextView(mContext);
+    }
 
-    /**
-     * 页面传递每日一句的键
-     */
-    String KEY_ENGLISH_BEAN = "englishBean";
+    @Override
+    public void onClick(View view) {
 
-    /**
-     * 用户名
-     */
-    String USER_NAME = "user_name";
+    }
+    //===Desc:本类中使用的方法===============================================================================
+
 }

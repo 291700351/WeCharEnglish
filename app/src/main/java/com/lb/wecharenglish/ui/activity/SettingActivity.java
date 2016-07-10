@@ -32,6 +32,7 @@ package com.lb.wecharenglish.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -45,6 +46,7 @@ import android.widget.ProgressBar;
 import com.lb.materialdesigndialog.base.DialogBase;
 import com.lb.materialdesigndialog.base.DialogWithTitle;
 import com.lb.materialdesigndialog.impl.MaterialDialogInput;
+import com.lb.materialdesigndialog.impl.MaterialDialogNormal;
 import com.lb.utils.CacheUtil;
 import com.lb.utils.LogUtil;
 import com.lb.utils.SdCardUtil;
@@ -145,6 +147,7 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     protected void setViewData() {
+        setActionBarDatas(true, getString(R.string.txt_setting), false, false, null);
         pb_setting_synchronousing.setVisibility(View.GONE);
     }
 
@@ -216,32 +219,69 @@ public class SettingActivity extends BaseActivity {
                 break;
 
             case R.id.ll_setting_backup://备份本地数据库的操作
-                String floder = getCacheDir().getParent();
-                File file = new File(floder, "databases");
-                file = new File(file, "english.db");
-                if (file.exists() && file.isFile()) {
-                    try {
-                        FileInputStream fis = new FileInputStream(file);
-                        FileOutputStream fos = new FileOutputStream(
-                                new File(SdCardUtil.getSDCardPath() + File.separator + "english.db"));
+                MaterialDialogNormal dialog = new MaterialDialogNormal(mContext);
+                dialog.setCancelable(false);
+                dialog.setTitle("提示");
+                dialog.setIcon(R.mipmap.ic_launcher);
+                dialog.setMessage("逗逼！不要点了，这个功能是给开发者大神使用的，故意显示出来给你看看的，没啥事就不要瞎J8点，记住没有没有？");
 
-                        byte[] buf = new byte[1024];
-                        int len;
-
-                        while ((len = fis.read(buf)) != -1) {
-                            fos.write(buf, 0, len);
-                            fos.flush();
-                        }
-
-                        fos.close();
-                        fis.close();
-                        LogUtil.log(this, "复制完毕");
-
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                dialog.setPositiveButton("记住了", new DialogWithTitle.OnClickListener() {
+                    @Override
+                    public void click(DialogBase dialog, View view) {
+                        dialog.dismiss();
                     }
-                }
+                });
+                dialog.setNegativeButton("没记住", new DialogWithTitle.OnClickListener() {
+                    @Override
+                    public void click(DialogBase dialog, View view) {
+                        ToastUtil.showShortToast(mContext, "怎么那么笨啊，这点小事儿都记不住，记不住我就不隐藏");
+                        final MediaPlayer player = new MediaPlayer();
+
+                        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mediaPlayer) {
+                                player.start();
+                            }
+                        });
+
+                        try {
+                            player.setDataSource("https://mp.weixin.qq.com/cgi-bin/readtemplate?t=tmpl/audio_tmpl&name=132&play_length=04:31");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        player.prepareAsync();
+
+
+                    }
+                });
+
+
+//                String floder = getCacheDir().getParent();
+//                File file = new File(floder, "databases");
+//                file = new File(file, "english.db");
+//                if (file.exists() && file.isFile()) {
+//                    try {
+//                        FileInputStream fis = new FileInputStream(file);
+//                        FileOutputStream fos = new FileOutputStream(
+//                                new File(SdCardUtil.getSDCardPath() + File.separator + "english.db"));
+//
+//                        byte[] buf = new byte[1024];
+//                        int len;
+//
+//                        while ((len = fis.read(buf)) != -1) {
+//                            fos.write(buf, 0, len);
+//                            fos.flush();
+//                        }
+//
+//                        fos.close();
+//                        fis.close();
+//                        LogUtil.log(this, "复制完毕");
+//
+//
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
 
                 break;
         }

@@ -18,66 +18,78 @@
         card_view:cardElevation="2dp"
         card_view:cardUseCompatPadding="true">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@android:color/white"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cb_item_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:background="@android:color/white"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_item_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="@color/color_txt_black"
-                    android:textSize="@dimen/size_txt_big"
-                    tools:text="Title" />
-
-                <TextView
-                    android:id="@+id/tv_item_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:textColor="@color/color_txt_gray"
-                    android:textSize="@dimen/size_txt_small"
-                    tools:text="2011-11-11" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/iv_itme_img"
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@null"
-                    android:scaleType="fitXY"
-                    tools:background="@mipmap/ic_launcher" />
-
-                <TextView
-                    android:id="@+id/tv_item_desc"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="5dp"
-                    android:ellipsize="end"
-                    android:maxLines="6"
-                    android:textColor="#3a3a3a"
-                    android:textSize="@dimen/size_txt_small"
-                    tools:text="This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_item_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/color_txt_black"
+                        android:textSize="@dimen/size_txt_big"
+                        tools:text="Title" />
+
+                    <TextView
+                        android:id="@+id/tv_item_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="@color/color_txt_gray"
+                        android:textSize="@dimen/size_txt_small"
+                        tools:text="2011-11-11" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iv_itme_img"
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@null"
+                        android:scaleType="fitXY"
+                        tools:background="@mipmap/ic_launcher" />
+
+                    <TextView
+                        android:id="@+id/tv_item_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="5dp"
+                        android:ellipsize="end"
+                        android:maxLines="6"
+                        android:textColor="#3a3a3a"
+                        android:textSize="@dimen/size_txt_small"
+                        tools:text="This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!This is test data!" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

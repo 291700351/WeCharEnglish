@@ -31,10 +31,12 @@
 package com.lb.wecharenglish.ui.adapter;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,14 +46,16 @@ import com.lb.wecharenglish.R;
 import com.lb.wecharenglish.domain.EnglishBean;
 import com.lb.wecharenglish.domain.EnglishImgBean;
 import com.lb.wecharenglish.server.EnglishImgServer;
-import com.lb.wecharenglish.server.EnglishServer;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.sackcentury.shinebuttonlib.ShineButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,12 +75,29 @@ public class HomeAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<EnglishBean> datas;
 
+    private ViewHolder holder;
+
+    /**
+     * 是否处于编辑状态
+     */
+    private boolean isInEditMode;
+
+    private Map<Integer, Boolean> editPoistions;//用于存放编辑的条目位置
+
+    private Set<Integer> selectedPoistion;//用户选中的条目位置
+
+
     //===Desc:构造函数===============================================================================================
 
     public HomeAdapter(Context context, List<EnglishBean> datas) {
         this.mContext = context;
         this.inflater = LayoutInflater.from(context);
         this.datas = datas;
+
+        isInEditMode = false;
+        editPoistions = new HashMap<>();
+        selectedPoistion = new TreeSet<>();//使用TreeSet自动排序
+
     }
 
     //===Desc:复写父类中的方法===============================================================================
@@ -100,18 +121,37 @@ public class HomeAdapter extends BaseAdapter {
         if (null == view) {
             view = inflater.inflate(R.layout.adapter_home, viewGroup, false);
         }
-        final ViewHolder holder = ViewHolder.getHolder(view);
+        holder = ViewHolder.getHolder(view);
         //设置数据显示
+        //===Desc:===============================================================================================
+        //默认不显示checkbox
+        holder.cb_item_check.setVisibility(View.GONE);
+
+
+        if (isInEditMode()) {
+            holder.cb_item_check.setVisibility(View.VISIBLE);
+        } else {
+            holder.cb_item_check.setVisibility(View.GONE);
+        }
+        if (null == editPoistions.get(i)) {
+            holder.cb_item_check.setChecked(false);
+        } else {
+            holder.cb_item_check.setChecked(editPoistions.get(i));
+
+        }
+        //===Desc:===============================================================================================
+
+
         final EnglishBean bean = datas.get(i);
         holder.tv_item_title.setText(bean.getTitle());
         SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm:ss", Locale.CHINESE);
         holder.tv_item_date.setText(format.format(new Date(bean.getDate())));
 
-        String desc = bean.getDesc();
+        //noinspection deprecation
+        String desc = Html.fromHtml(bean.getDesc()).toString();
         Pattern p_html = Pattern.compile("<[^>]+>", Pattern.CASE_INSENSITIVE);
         Matcher m_html = p_html.matcher(desc);
         desc = m_html.replaceAll(""); // 过滤html标签
-        LogUtil.log(this,desc);
         holder.tv_item_desc.setText(desc);
 
         //查询数据库获取第一张图片
@@ -125,6 +165,68 @@ public class HomeAdapter extends BaseAdapter {
         }
         return view;
     }
+
+    @Override
+    public void notifyDataSetChanged() {
+        for (int i = 0; i < datas.size(); i++) {
+            if (null == editPoistions.get(i)) {
+                editPoistions.put(i, false);
+            }
+        }
+        super.notifyDataSetChanged();
+    }
+
+    //===Desc:外接使用的方法===============================================================================================
+
+    public boolean isInEditMode() {
+        return isInEditMode;
+    }
+
+    /**
+     * 设置是否进入编辑模式
+     *
+     * @param isEditMode true：进入编辑模式，false：退出编辑模式
+     */
+    public void setEditMode(boolean isEditMode) {
+        if (isInEditMode != isEditMode) {
+            isInEditMode = isEditMode;
+            notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 切换编辑模式，如果当前模式是编辑模式，就切换到非编辑模式，反之亦然
+     */
+    public void toggleEditMode() {
+        setEditMode(!isInEditMode());
+    }
+
+    /**
+     * 切换条目的选中状态
+     *
+     * @param poistion 对应的条目位置
+     */
+    public void toggleSelectedPoistion(int poistion) {
+        editPoistions.put(poistion, !editPoistions.get(poistion));
+        notifyDataSetChanged();
+        if (editPoistions.get(poistion)) {
+            //选中
+            selectedPoistion.add(poistion);
+        } else {
+            //不选中
+            selectedPoistion.remove(poistion);
+        }
+    }
+
+    /**
+     * 获取用户选中的条目的poistion位置的集合，已经排序
+     *
+     * @return 排序好的选中位置集合
+     */
+    public Set<Integer> getSelectedPoistion() {
+        return selectedPoistion;
+    }
+
     //===Desc:本类中使用的方法===============================================================================
 
     private static class ViewHolder {
@@ -132,6 +234,7 @@ public class HomeAdapter extends BaseAdapter {
         TextView tv_item_date;
         TextView tv_item_desc;
         ImageView iv_itme_img;
+        CheckBox cb_item_check;
 
 
         private ViewHolder(View view) {
@@ -139,6 +242,7 @@ public class HomeAdapter extends BaseAdapter {
             tv_item_date = ViewUtil.findViewById(view, R.id.tv_item_date);
             tv_item_desc = ViewUtil.findViewById(view, R.id.tv_item_desc);
             iv_itme_img = ViewUtil.findViewById(view, R.id.iv_itme_img);
+            cb_item_check = ViewUtil.findViewById(view, R.id.cb_item_check);
         }
 
         public static ViewHolder getHolder(View view) {

@@ -1,6 +1,8 @@
 package com.lb.wecharenglish;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 import com.lb.utils.CacheUtil;
 import com.lb.utils.LogUtil;
+import com.lb.utils.Screenutil;
 import com.lb.utils.ToastUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -26,12 +29,13 @@ import com.lb.wecharenglish.ui.activity.BaseActivity;
 import com.lb.wecharenglish.ui.activity.EnglishDetailActivity;
 import com.lb.wecharenglish.ui.activity.SettingActivity;
 import com.lb.wecharenglish.ui.adapter.HomeAdapter;
+import com.lb.wecharenglish.utils.PermissionUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemLongClickListener {
     //===Desc:成员变量===============================================================================================
 
     /**
@@ -72,6 +76,12 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
      */
     private LinearLayout ll_main_menu_showLike;
 
+    /**
+     * 侧滑菜单导出功能按钮
+     */
+    private LinearLayout ll_main_menu_export;
+
+
     //===Desc:复写父类的方法===============================================================================================
     @Override
     protected void initData() {
@@ -97,10 +107,13 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         tv_main_menu_username = ViewUtil.findViewById(this, R.id.tv_main_menu_username);
         ll_main_menu_setting = ViewUtil.findViewById(this, R.id.ll_main_menu_setting);
         ll_main_menu_showLike = ViewUtil.findViewById(this, R.id.ll_main_menu_showLike);
+        ll_main_menu_export = ViewUtil.findViewById(this, R.id.ll_main_menu_export);
+
     }
 
     @Override
     protected void setViewData() {
+
         setActionBarDatas(false, getString(R.string.app_name), false, false, null);
         //如果是返回当前界面，不是重新创建就不请求服务器加载数据了
         if (!isResume)
@@ -170,16 +183,25 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         lv_main_datas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                EnglishBean englishBean = datas.get(i - lv_main_datas.getHeaderViewsCount());
-                Intent intent = new Intent(mContext, EnglishDetailActivity.class);
-                intent.putExtra(Keys.KEY_ENGLISH_BEAN, englishBean);
-                startActivity(intent);
+                if (!adapter.isInEditMode()) {
+                    EnglishBean englishBean = datas.get(i - lv_main_datas.getHeaderViewsCount());
+                    Intent intent = new Intent(mContext, EnglishDetailActivity.class);
+                    intent.putExtra(Keys.KEY_ENGLISH_BEAN, englishBean);
+                    startActivity(intent);
+                } else {
+                    adapter.toggleSelectedPoistion(i);
+                    LogUtil.log(this, adapter.getSelectedPoistion());
+                }
             }
         });
 
+        //设置ListView长按事件监听
+        lv_main_datas.setOnItemLongClickListener(this);
+
         //设置按钮点击事件
         ll_main_menu_setting.setOnClickListener(this);
-        ll_main_menu_showLike.setOnClickListener(this);
+        ll_main_menu_showLike.setOnClickListener(this);//显示我的收藏
+        ll_main_menu_export.setOnClickListener(this);//导出md文档
     }
 
     @Override
@@ -188,14 +210,17 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         if (dl_main_drawermenu.isDrawerOpen(Gravity.LEFT)) {
             dl_main_drawermenu.closeDrawers();
         } else {
-            //跳转到桌面
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            startActivity(intent);
-            ToastUtil.showShortToast(mContext, getResources().getString(R.string.app_name) + "后台运行");
+            if (adapter.isInEditMode()) {
+                adapter.setEditMode(false);
+            } else {
+                //跳转到桌面
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
+                ToastUtil.showShortToast(mContext, getResources().getString(R.string.app_name) + "后台运行");
+            }
         }
     }
-
     //===Desc:本类使用的方法===============================================================================================
 
     private void loadData() {
@@ -321,10 +346,63 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 //关闭菜单
                 dl_main_drawermenu.closeDrawers();
                 break;
+
+            case R.id.ll_main_menu_export:
+                PermissionUtil.requestPermission(this, PermissionUtil.EXTERNAL_STORAGE_REQ_CODE, new Runnable() {
+                    @Override
+                    public void run() {
+                        export();
+                    }
+                });
+                break;
         }
+    }
+
+    @Override
+    protected void requestPermissionsFail() {
+        ToastUtil.showShortToast(mContext, "您还没有读写存储设备的权限，操作不能继续");
+    }
+
+    @Override
+    protected void requestPermissionsSuccess() {
+        LogUtil.log(this, "开始导出");
+        export();
     }
 
     private Handler mHandle = new Handler();
 
     private boolean isLoadMore;
+
+    //===Desc:ListView条目长按事件的处理===============================================================================================
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+//        adapter.setEditMode(true);
+        return true;
+    }
+
+    private boolean isExporting;
+
+    private void export() {
+        if (isExporting) {
+            ToastUtil.showShortToast(mContext, "正在导出");
+            return;
+        }
+        isExporting = true;
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                return new EnglishServer().exportFile(mContext, datas);
+            }
+
+            @Override
+            protected void onPostExecute(Boolean exportSuccess) {
+                if (exportSuccess)
+                    ToastUtil.showShortToast(mContext, "导出成功");
+                else
+                    ToastUtil.showShortToast(mContext, "导出失败");
+                isExporting = false;
+            }
+        }.execute();
+    }
 }

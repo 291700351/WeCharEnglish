@@ -59,7 +59,7 @@ public class WeCharApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        LogUtil.initLog(true, LogUtil.Level.e);
+        LogUtil.initLog(false, LogUtil.Level.e);
 
         initImageLoader(this);
 

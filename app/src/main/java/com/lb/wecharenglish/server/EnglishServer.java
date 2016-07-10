@@ -38,12 +38,12 @@ import android.text.Html;
 import android.text.TextUtils;
 
 import com.lb.utils.LogUtil;
+import com.lb.utils.SdCardUtil;
 import com.lb.wecharenglish.dao.EnglishDao;
 import com.lb.wecharenglish.dao.impl.EnglishImpl;
 import com.lb.wecharenglish.db.EnglishDatabaseHelper;
 import com.lb.wecharenglish.domain.EnglishBean;
 import com.lb.wecharenglish.domain.EnglishImgBean;
-import com.lb.wecharenglish.net.Httphelper;
 import com.lb.wecharenglish.net.Urls;
 
 import org.jsoup.Jsoup;
@@ -51,11 +51,21 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 项目名称：ysp-android<br>
@@ -95,7 +105,8 @@ public class EnglishServer {
         if (null != dbBean) return false;
 
         //解析出img标签，添加进数据库
-        Document document = Jsoup.parse(bean.getDesc());
+        //noinspection deprecation
+        Document document = Jsoup.parse(Html.fromHtml(bean.getDesc()).toString());
         Elements imgElements = document.select("img");
         for (int j = 0; j < imgElements.size(); j++) {
             Element imgElement = imgElements.get(j);
@@ -159,7 +170,11 @@ public class EnglishServer {
     public List<EnglishBean> getDataFromRemote() {
         List<EnglishBean> list = new ArrayList<>();
         try {
-            Document document = Jsoup.connect(Urls.ENGLISH_URL).timeout(60 * 1000).get();
+            Document document;
+            if (LogUtil.isDebug)
+                document = Jsoup.connect(Urls.ENGLISH_URL).timeout(10).get();
+            else
+                document = Jsoup.connect(Urls.ENGLISH_URL).timeout(60 * 1000).get();
             if (null == document) return list;
             Elements items = document.getElementsByTag("item");
             if (null == items || items.size() == 0) return list;
@@ -249,6 +264,75 @@ public class EnglishServer {
         dbBean.setLike(isLike);
         int count = dao.update(context, dbBean);
         return count > 1;
+    }
+
+    public boolean exportFile(Context context, List<EnglishBean> datas) {
+        if (null == datas || datas.size() == 0) return false;
+        String path = SdCardUtil.getSDCardPath() + File.separator + context.getPackageName() + File.separator
+                + "export" + File.separator + "local";
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd-HH-mm-ss", Locale.CHINESE);
+        String fileName = "everyday_export_" + format.format(date) + ".md";
+        File exportFile = new File(path);
+        if (!exportFile.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            exportFile.mkdirs();
+        }
+
+        exportFile = new File(exportFile, fileName);
+        if (!exportFile.exists()) {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                exportFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        FileOutputStream fos = null;
+        BufferedWriter bw = null;
+        try {
+            fos = new FileOutputStream(exportFile);
+            bw = new BufferedWriter(new OutputStreamWriter(fos));
+            for (EnglishBean bean : datas) {
+                bw.write("##<font color=red>" + bean.getTitle() + "</font>");
+                bw.newLine();
+
+                //noinspection deprecation
+                String desc = Html.fromHtml(bean.getDesc()).toString();
+                Pattern p_html = Pattern.compile("<[^>]+>", Pattern.CASE_INSENSITIVE);
+                Matcher m_html = p_html.matcher(desc);
+                desc = m_html.replaceAll("<br/>"); // 过滤html标签
+
+                //noinspection deprecation
+                bw.write(Html.fromHtml(desc).toString());
+                bw.newLine();
+                String time = new SimpleDateFormat("MM-dd HH:mm:ss", Locale.CHINESE)
+                        .format(new Date(bean.getDate()));
+                bw.write(time);
+                bw.newLine();
+                bw.write("<hr/>");
+                bw.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != bw) {
+                try {
+                    bw.close();
+                } catch (IOException e) {
+                    LogUtil.log(this, e);
+                }
+            }
+            if (null != fos) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
     }
 
 }

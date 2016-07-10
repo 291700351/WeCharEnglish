@@ -30,108 +30,99 @@
 //                  不见满街漂亮妹，哪个归得程序员？
 package com.lb.wecharenglish.ui.activity;
 
-import android.text.Html;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ImageView;
 
+import com.lb.utils.CacheUtil;
 import com.lb.utils.ViewUtil;
+import com.lb.wecharenglish.MainActivity;
 import com.lb.wecharenglish.R;
-import com.lb.wecharenglish.domain.EnglishBean;
+import com.lb.wecharenglish.global.ImageLoaderOptions;
 import com.lb.wecharenglish.global.Keys;
-import com.lb.wecharenglish.server.EnglishServer;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * 项目名称：ysp-android<br>
  * 作者：IceLee<br>
  * 邮箱：lb291700351@live.cn<br>
- * 时间：2016/7/5 20:36<br>
- * 类描述： <br>
+ * 时间：2016/7/9 16:23<br>
+ * 类描述：程序的启动界面 <br>
  */
-public class EnglishDetailActivity extends BaseActivity {
+public class SplashActivity extends BaseActivity {
+    private static final int ENTER_HOME = 0;
+
     //===Desc:成员变量===============================================================================
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case ENTER_HOME:
+                    CacheUtil.putBoolean(mContext, Keys.Key_IS_FIRST_RUN_APP, false);
+                    enterHome();
+                    break;
+            }
+        }
+    };
 
     /**
-     * 上一个界面传递过来的每日一句对象
+     * 加载启动图片
      */
-    private EnglishBean englishBean;
-
-    /**
-     * 显示标题的控件
-     */
-    private TextView tv_detail_title;
-
-    /**
-     * 显示时间的控件
-     */
-    private TextView tv_detail_time;
-
-    /**
-     * 显示详情的控件
-     */
-    private TextView tv_detail_desc;
-
+    private ImageView iv_splash_pic;
 
     //===Desc:复写父类中的方法===============================================================================
 
-
     @Override
     protected void initData() {
-        englishBean = (EnglishBean) getIntent().getSerializableExtra(Keys.KEY_ENGLISH_BEAN);
-        if (null == englishBean)//如果三个界面没有传递过来对象 就关闭当前页面
-            finish();
+        showActionBar = false;
     }
-
 
     @Override
     protected View createView() {
-        return View.inflate(mContext, R.layout.activity_english_detail, null);
+        return View.inflate(mContext, R.layout.activity_splash, null);
     }
 
     @Override
     protected void findView() {
-        tv_detail_title = ViewUtil.findViewById(this, R.id.tv_detail_title);
-        tv_detail_time = ViewUtil.findViewById(this, R.id.tv_detail_time);
-        tv_detail_desc = ViewUtil.findViewById(this, R.id.tv_detail_desc);
+        iv_splash_pic = ViewUtil.findViewById(rootView, R.id.iv_splash_pic);
     }
-
 
     @Override
     protected void setViewData() {
-        setActionBarDatas(true, englishBean.getTitle(), true, englishBean.isLike(), this);
-
-        tv_detail_title.setText(englishBean.getTitle());
-        String time = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.CHINESE).format(new Date(englishBean.getDate()));
-        tv_detail_time.setText(time);
-        //noinspection deprecation
-        String desc = Html.fromHtml(englishBean.getDesc()).toString();
-
-        desc = desc.replaceAll("<img[^>]*>", " ");
-
-
-        //noinspection deprecation
-        tv_detail_desc.setText(Html.fromHtml(desc));
-    }
-
-    @Override
-    protected void setListener() {
-
+        //设置启动图片，使用ImageLoader 防止内存溢出
+        ImageLoader.getInstance().displayImage("drawable://" + R.drawable.splash_pic,
+                iv_splash_pic, ImageLoaderOptions.options);
+        //延迟3秒进入主页面
+        mHandler.sendEmptyMessageDelayed(ENTER_HOME, 3 * 1000);
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.sb_base_actionbar_like://收藏按钮点击事件处理
-                new EnglishServer().setLike(mContext, englishBean.getId(), !englishBean.isLike());
-                englishBean.setLike(!englishBean.isLike());
-                break;
-        }
+
     }
+
+    @Override
+    protected void onDestroy() {
+        mHandler.removeCallbacksAndMessages(null);
+        super.onDestroy();
+    }
+
 
     //===Desc:本类中使用的方法===============================================================================
 
+
+    /**
+     * 进入主页面的方法
+     */
+    private void enterHome() {
+        if (CacheUtil.getBoolean(mContext, Keys.Key_IS_FIRST_RUN_APP, true)) {
+            startActivity(new Intent(mContext, GuideActivity.class));
+            finish();
+        } else {
+            startActivity(new Intent(mContext, MainActivity.class));
+            finish();
+        }
+    }
 }

@@ -73,7 +73,6 @@ public class PermissionUtil {
         if (requestPermissionCode == EXTERNAL_STORAGE_REQ_CODE)
             requestPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-        LogUtil.log(null, "----------------------");
 
 //        // Here, thisActivity is the current activity
 //        if (ContextCompat.checkSelfPermission(activity,
@@ -113,7 +112,9 @@ public class PermissionUtil {
                         new String[]{requestPermission},
                         EXTERNAL_STORAGE_REQ_CODE);
             }
+            LogUtil.log(activity,"没有权限");
         } else {
+            LogUtil.log(activity,"有权限");
             new Handler().post(r);
         }
     }

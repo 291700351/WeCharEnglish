@@ -18,13 +18,22 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+
+        <activity
+            android:name=".ui.activity.SplashActivity"
+            android:theme="@style/NoTitleFullscreen">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--引导页面-->
+        <activity android:name=".ui.activity.GuideActivity" />
+        <!--主页面-->
+        <activity android:name=".MainActivity" />
 
         <!--每日一句详情界面-->
         <activity android:name=".ui.activity.EnglishDetailActivity" />
@@ -37,7 +46,7 @@
         <receiver
             android:name=".receiver.TimingTaskReceiver"
             android:exported="true">
-            <intent-filter>
+            <intent-filter android:priority="999">
                 <action android:name="com.lb.wecharenglish.getRemoteData" />
             </intent-filter>
         </receiver>

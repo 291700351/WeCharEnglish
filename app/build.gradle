@@ -9,7 +9,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
     }
 
     signingConfigs {
@@ -32,13 +32,43 @@ android {
             signingConfig signingConfigs.release
 
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-rules.pro'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             signingConfig signingConfigs.debug
 
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-rules.pro'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds true
+        abortOnError true
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def oldFile = output.outputFile
+//            edian_channel_01_v1.1.6_360手机助手
+            //1.创建 edian_v
+            def firstName = "everyday_v";
+
+            //3.获取清单文件中的版本号
+            def versionName = versionName;
+            //4.根基标示渠道号填写对应的渠道商店
+
+            //5.构建类型 是否是debug等
+            def buildType = "";
+            if (variant.buildType.name.equals('release')) {
+                buildType = "release_";
+            } else if (variant.buildType.name.equals('debug')) {
+                buildType = "debug_";
+            }
+            def releaseApkName = buildType + firstName + versionName  + '.apk'
+
+//            + "_" + getDate()
+            output.outputFile = new File(oldFile.parent as File, releaseApkName)
         }
     }
 

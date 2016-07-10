@@ -19,11 +19,14 @@
 
             <ListView
                 android:id="@+id/lv_main_datas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="0dp"
                 android:listSelector="@android:color/transparent" />
+
+
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <ScrollView
@@ -60,14 +63,13 @@
                 <LinearLayout
                     android:id="@+id/ll_main_menu_setting"
                     android:layout_width="match_parent"
-                    android:gravity="center"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:layout_height="wrap_content">
+                    android:gravity="center">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/setting_press"
                         android:drawablePadding="8dp"
                         android:gravity="center"
                         android:paddingBottom="10dp"
@@ -76,22 +78,40 @@
                         android:textColor="@color/color_txt_white"
                         android:textSize="@dimen/size_txt_center" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/ll_main_menu_showLike"
                     android:layout_width="match_parent"
-                    android:gravity="center"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
 
                     <TextView
                         android:id="@+id/tv_main_menu_like"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/setting_press"
                         android:drawablePadding="8dp"
                         android:gravity="center"
                         android:paddingBottom="10dp"
                         android:paddingTop="10dp"
                         android:text="@string/txt_show_like"
+                        android:textColor="@color/color_txt_white"
+                        android:textSize="@dimen/size_txt_center" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_main_menu_export"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="8dp"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:text="@string/txt_export"
                         android:textColor="@color/color_txt_white"
                         android:textSize="@dimen/size_txt_center" />
                 </LinearLayout>
