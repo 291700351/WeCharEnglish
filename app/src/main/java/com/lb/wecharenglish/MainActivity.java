@@ -160,14 +160,18 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
                         // 判断滚动到底部
                         if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
-                            isLoadMore = true;
-                            sr_main_refresh.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    sr_main_refresh.setRefreshing(true);
-                                    onRefresh();
-                                }
-                            });
+                            if (showLoadMore) {
+                                isLoadMore = true;
+                                sr_main_refresh.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        sr_main_refresh.setRefreshing(true);
+                                        onRefresh();
+                                    }
+                                });
+                            } else {
+                                showLoadMore = true;
+                            }
                         }
                         break;
                 }
@@ -190,7 +194,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     startActivity(intent);
                 } else {
                     adapter.toggleSelectedPoistion(i);
-                    LogUtil.log(this, adapter.getSelectedPoistion());
                 }
             }
         });
@@ -289,7 +292,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 }
             }
         }, 1000);
-
+        showLoadMore = false;
         isLoadMore = false;
     }
 
@@ -306,6 +309,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         //设置用户名 从sp缓存中获取用户名  如果没有就像是沙飞
         tv_main_menu_username.setText(CacheUtil.getString(mContext, Keys.USER_NAME, "沙飞"));
     }
+
+    private boolean showLoadMore;
 
     //===Desc:刷新的监听===============================================================================================
     @Override

@@ -40,7 +40,6 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.lb.utils.LogUtil;
 import com.lb.utils.ViewUtil;
 import com.lb.wecharenglish.R;
 import com.lb.wecharenglish.domain.EnglishBean;
@@ -74,8 +73,6 @@ public class HomeAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater inflater;
     private List<EnglishBean> datas;
-
-    private ViewHolder holder;
 
     /**
      * 是否处于编辑状态
@@ -121,7 +118,7 @@ public class HomeAdapter extends BaseAdapter {
         if (null == view) {
             view = inflater.inflate(R.layout.adapter_home, viewGroup, false);
         }
-        holder = ViewHolder.getHolder(view);
+        ViewHolder holder = ViewHolder.getHolder(view);
         //设置数据显示
         //===Desc:===============================================================================================
         //默认不显示checkbox
@@ -152,7 +149,7 @@ public class HomeAdapter extends BaseAdapter {
         Pattern p_html = Pattern.compile("<[^>]+>", Pattern.CASE_INSENSITIVE);
         Matcher m_html = p_html.matcher(desc);
         desc = m_html.replaceAll(""); // 过滤html标签
-        holder.tv_item_desc.setText(desc);
+        holder.tv_item_desc.setText(Html.fromHtml(desc));
 
         //查询数据库获取第一张图片
         final List<EnglishImgBean> imgs = new EnglishImgServer().getImgsByEnglishId(mContext, bean.getId());
